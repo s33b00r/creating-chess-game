@@ -32,4 +32,28 @@ abstract public class Piece {
         return x >= 0 && x < 8 &&
                 y >= 0 && y < 8;
     }
+
+    protected boolean attackingFriendly(int x, int y, List<Piece> allPieces){
+        for(Piece p : allPieces){
+            if(p.getIsWhite() == isWhite){
+                if(p.getXPos() == xPos && p.getYPos() == yPos){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public int getXPos() {
+        return xPos;
+    }
+    public int getYPos() {
+        return yPos;
+    }
+
+    public boolean getIsWhite(){
+        return isWhite;
+    }
+
 }

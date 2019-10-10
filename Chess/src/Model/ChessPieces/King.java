@@ -20,7 +20,23 @@ public class King extends Piece {
         if(attackingFriendly(xPos, yPos, allPieces)){
             return false;
         }
-        if()
-        return true;
+
+        //Castle rules
+        if(!hasMoved){
+            if(xPos == 2 || xPos == 6){
+                if(!canCastle()/*TODO*/){
+                    return false;
+                }
+            }
+        }
+
+        //Standard rules
+        return Math.abs(getXPos() - xPos) <= 1 &&
+                Math.abs(getYPos() - yPos) <= 1;
+    }
+
+    private boolean canCastle() {
+        //TODO
+        return false;
     }
 }
