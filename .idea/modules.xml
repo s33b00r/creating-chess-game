@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Chess/Chess.iml" filepath="$PROJECT_DIR$/Chess/Chess.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/creating-chess-game.iml" filepath="$PROJECT_DIR$/.idea/creating-chess-game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Chess/out.iml" filepath="$PROJECT_DIR$/Chess/out.iml" />
     </modules>
   </component>
 </project>
