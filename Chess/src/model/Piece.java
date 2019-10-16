@@ -113,6 +113,14 @@ abstract public class Piece {
         return realYPos;
     }
 
+    public void setRealXPos(int realXPos) {
+        this.realXPos = realXPos;
+    }
+
+    public void setRealYPos(int realYPos) {
+        this.realYPos = realYPos;
+    }
+
     public boolean getIsWhite() {
         return isWhite;
     }
