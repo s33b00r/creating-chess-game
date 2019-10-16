@@ -1,6 +1,9 @@
-package Model;
+package model;
 
 import java.util.List;
+
+import static view.ChessGUI.WINDOW_HEIGHT;
+import static view.ChessGUI.WINDOW_WIDTH;
 
 abstract public class Piece {
     //Position on the board (goes from 0 - 7)
@@ -19,6 +22,12 @@ abstract public class Piece {
         this.yPos = yPos;
         this.isWhite = isWhite;
         this.notation = notation;
+        realXPos = calculateRealXPos();
+        realYPos = calculateRealYPos();
+    }
+
+    private int calculateRealXPos() {
+        return WINDOW_WIDTH / 8 * this.xPos;
     }
 
     public abstract boolean canMove(int xPos, int yPos, List<Piece> allPieces);
@@ -26,6 +35,16 @@ abstract public class Piece {
     public void move(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
+        realXPos = calculateRealXPos();
+        realYPos = calculateRealYPos();
+    }
+
+    boolean isPointingInside(int x, int y){
+        return x == xPos && y == yPos;
+    }
+
+    private int calculateRealYPos() {
+        return WINDOW_HEIGHT / 8 * (7 - this.yPos);
     }
 
     protected boolean isOnBoard(int x, int y) {
@@ -84,6 +103,14 @@ abstract public class Piece {
 
     public int getYPos() {
         return yPos;
+    }
+
+    public int getRealXPos() {
+        return realXPos;
+    }
+
+    public int getRealYPos() {
+        return realYPos;
     }
 
     public boolean getIsWhite() {

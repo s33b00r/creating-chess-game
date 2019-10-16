@@ -1,6 +1,6 @@
-package Model.ChessPieces;
+package model.ChessPieces;
 
-import Model.Piece;
+import model.Piece;
 
 import java.util.List;
 
