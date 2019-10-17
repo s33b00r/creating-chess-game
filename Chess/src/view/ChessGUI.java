@@ -71,42 +71,30 @@ public class ChessGUI extends Application {
         timer.start();
     }
 
-    private Piece currentPiece = null;
-
     private void mouseClicked(MouseEvent mouse) {
-        if(currentPiece != null){
-            currentPiece.move(Board.convertRealX(mouse.getX()), Board.convertRealY(mouse.getY()));
-            currentPiece = null;
-        }else{
-            currentPiece = chess.board.getPieceAt(mouse.getX(), mouse.getY());
-            moveToMouse(currentPiece, mouse.getX(), mouse.getY());
-        }
+       chess.mouseClickHandler(mouse.getX(), mouse.getY());
     }
 
     private void mouseMoved(MouseEvent mouse){
-        if(currentPiece != null){
-            moveToMouse(currentPiece, mouse.getX(), mouse.getY());
+        if(chess.getActivePiece() != null){
+            chess.mouseMovementHandler(mouse.getX(), mouse.getY());
         }
     }
 
-    private void moveToMouse(Piece p, double mouseX, double mouseY){
-        p.setRealXPos((int) mouseX);
-        p.setRealYPos((int) mouseY);
-    }
 
     private void render(){
         fg.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         for(Piece p : chess.board.getAllPieces()){
-            if(p != currentPiece){
+            if(p != chess.getActivePiece()){
                 drawImage(p, p.getRealXPos(), p.getRealYPos(), WINDOW_WIDTH / 8, WINDOW_HEIGHT / 8);
             }
         }
-        if(currentPiece != null){
+        if(chess.getActivePiece() != null){
             double width = WINDOW_WIDTH * 1.2 / 8;
             double height = WINDOW_HEIGHT * 1.2 / 8;
-            double xPos = currentPiece.getRealXPos() - width / 2;
-            double yPos = currentPiece.getRealYPos() - height / 2;
-            drawImage(currentPiece, xPos, yPos, width, height);
+            double xPos = chess.getActivePiece().getRealXPos() - width / 2;
+            double yPos = chess.getActivePiece().getRealYPos() - height / 2;
+            drawImage(chess.getActivePiece(), xPos, yPos, width, height);
         }
     }
 
