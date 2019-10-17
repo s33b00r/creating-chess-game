@@ -12,6 +12,10 @@ public class Pawn extends Piece {
 
     @Override
     public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
-        return false;
+        if(!isOnBoard(xPos, yPos)){
+            return false;
+        }
+
+        return true;
     }
 }

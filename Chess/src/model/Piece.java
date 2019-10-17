@@ -26,7 +26,7 @@ abstract public class Piece {
         realYPos = calculateRealYPos();
     }
 
-    private int calculateRealXPos() {
+    public int calculateRealXPos() {
         return WINDOW_WIDTH / 8 * this.xPos;
     }
 
@@ -43,7 +43,7 @@ abstract public class Piece {
         return x == xPos && y == yPos;
     }
 
-    private int calculateRealYPos() {
+    public int calculateRealYPos() {
         return WINDOW_HEIGHT / 8 * (7 - this.yPos);
     }
 
@@ -52,7 +52,7 @@ abstract public class Piece {
                 y >= 0 && y < 8;
     }
 
-    protected boolean attackingFriendly(int x, int y, List<Piece> allPieces) {
+    protected boolean attackingFriendly(List<Piece> allPieces) {
         for (Piece p : allPieces) {
             if (p.getIsWhite() == isWhite) {
                 if (p.xPos == xPos && p.yPos == yPos) {
@@ -111,6 +111,14 @@ abstract public class Piece {
 
     public int getRealYPos() {
         return realYPos;
+    }
+
+    public void setRealXPos(int realXPos) {
+        this.realXPos = realXPos;
+    }
+
+    public void setRealYPos(int realYPos) {
+        this.realYPos = realYPos;
     }
 
     public boolean getIsWhite() {

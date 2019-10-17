@@ -62,7 +62,7 @@ public class ChessGUI extends Application {
 
         Scene scene = new Scene(root);
         scene.setOnMouseClicked(this::mouseClicked);
-        scene.setOnMouseReleased(this::mouseReleased);
+        scene.setOnMouseMoved(this::mouseMoved);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Chess");
 
@@ -71,29 +71,36 @@ public class ChessGUI extends Application {
         timer.start();
     }
 
-    private Piece currentPiece = null;
-
     private void mouseClicked(MouseEvent mouse) {
-        if(currentPiece != null){
-            currentPiece.move(Board.convertRealX(mouse.getX()), Board.convertRealY(mouse.getY()));
-            currentPiece = null;
-        }else{
-            currentPiece = chess.board.getPieceAt(mouse.getX(), mouse.getY());
-        }
+       chess.mouseClickHandler(mouse.getX(), mouse.getY());
     }
 
-    private void mouseReleased(MouseEvent release){
-
+    private void mouseMoved(MouseEvent mouse){
+        if(chess.getActivePiece() != null){
+            chess.mouseMovementHandler(mouse.getX(), mouse.getY());
+        }
     }
 
 
     private void render(){
         fg.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         for(Piece p : chess.board.getAllPieces()){
-            Image pieceImage = assets.get(p, p.getIsWhite());
-            fg.drawImage(pieceImage, p.getRealXPos(), p.getRealYPos(), WINDOW_WIDTH / 8, WINDOW_HEIGHT / 8);
+            if(p != chess.getActivePiece()){
+                drawImage(p, p.getRealXPos(), p.getRealYPos(), WINDOW_WIDTH / 8, WINDOW_HEIGHT / 8);
+            }
         }
+        if(chess.getActivePiece() != null){
+            double width = WINDOW_WIDTH * 1.2 / 8;
+            double height = WINDOW_HEIGHT * 1.2 / 8;
+            double xPos = chess.getActivePiece().getRealXPos() - width / 2;
+            double yPos = chess.getActivePiece().getRealYPos() - height / 2;
+            drawImage(chess.getActivePiece(), xPos, yPos, width, height);
+        }
+    }
 
+    private void drawImage(Piece p, double x, double y, double width, double height){
+        Image pieceImage = assets.get(p, p.getIsWhite());
+        fg.drawImage(pieceImage, x, y, width, height);
     }
 
 }
