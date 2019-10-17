@@ -12,6 +12,14 @@ public class Knight extends Piece {
 
     @Override
     public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
-        return false;
+        if(!isOnBoard(xPos, yPos)){
+            return false;
+        }
+        if(attackingFriendly(xPos, yPos, allPieces)){
+            return false;
+        }
+        int dx = Math.abs(getXPos() - xPos);
+        int dy = Math.abs(getYPos() - yPos);
+        return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
     }
 }

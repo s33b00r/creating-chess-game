@@ -17,7 +17,7 @@ public class King extends Piece {
         if(!isOnBoard(xPos, yPos)){
              return false;
         }
-        if(attackingFriendly(allPieces)){
+        if(attackingFriendly(xPos, yPos, allPieces)){
             return false;
         }
 

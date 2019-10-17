@@ -52,10 +52,10 @@ abstract public class Piece {
                 y >= 0 && y < 8;
     }
 
-    protected boolean attackingFriendly(List<Piece> allPieces) {
+    protected boolean attackingFriendly(int newX, int newY, List<Piece> allPieces) {
         for (Piece p : allPieces) {
             if (p.getIsWhite() == isWhite) {
-                if (p.xPos == xPos && p.yPos == yPos) {
+                if (p.xPos == newX && p.yPos == newY) {
                     return true;
                 }
             }
@@ -64,13 +64,12 @@ abstract public class Piece {
     }
 
     //Expects that the piece is moving diagonally
-    protected boolean isGoingThroughAPieceDiagonally(int x, int y, List<Piece> allPieces){
-        int dX = xPos - x;
-        int dY = yPos - y;
+    protected boolean goingThroughAPieceDiagonally(int x, int y, List<Piece> allPieces) {
+        int dX = x - xPos;
+        int dY = y - yPos;
 
-        if(Math.abs(dX) != Math.abs(dY)){
-            System.out.println("Invalid input!");
-            return true;
+        if(Math.abs(dX) != Math.abs(dY) || dX == 0){
+            System.err.println("Invalid input");
         }
 
         int stepDirectionX = dX / Math.abs(dX);
@@ -83,6 +82,46 @@ abstract public class Piece {
                 return true;
             }
             stepsX += stepDirectionX;
+            stepsY += stepDirectionY;
+        }
+        return false;
+    }
+
+    protected boolean goingThroughAPieceHorizontally(int newX, int newY, List<Piece> allPieces) {
+        int dx = newX - xPos;
+        int dy = newY - yPos;
+
+        if(dy != 0 || dx == 0){
+            System.err.println("Invalid input");
+        }
+
+        int stepDirectionX = Math.abs(dx) / dx;
+        int stepsX = stepDirectionX;
+
+        while (stepsX != dx){
+            if(getPieceAt(stepsX + xPos, yPos, allPieces) != null){
+                return true;
+            }
+            stepsX += stepDirectionX;
+        }
+        return false;
+    }
+
+    protected boolean goingThroughAPieceVertically(int newX, int newY, List<Piece> allPieces) {
+        int dx = xPos - newX;
+        int dy = newY - yPos;
+
+        if(dx != 0 || dy == 0){
+            System.err.println("Invalid input");
+        }
+
+        int stepDirectionY = Math.abs(dy) / dy;
+        int stepsY = stepDirectionY;
+
+        while (stepsY != dy){
+            if(getPieceAt(xPos, stepsY + yPos, allPieces) != null){
+                return true;
+            }
             stepsY += stepDirectionY;
         }
         return false;
