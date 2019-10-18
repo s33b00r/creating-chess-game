@@ -63,7 +63,8 @@ abstract public class Piece {
         return false;
     }
 
-    //Expects that the piece is moving diagonally
+    //Expects that the piece is moving in that specific direction for these methods
+    //######################################################################################
     protected boolean goingThroughAPieceDiagonally(int x, int y, List<Piece> allPieces) {
         int dX = x - xPos;
         int dY = y - yPos;
@@ -126,8 +127,9 @@ abstract public class Piece {
         }
         return false;
     }
+    //######################################################################################
 
-    private Piece getPieceAt(int xPos, int yPos, List<Piece> allPieces){
+    protected Piece getPieceAt(int xPos, int yPos, List<Piece> allPieces){
         for(Piece p : allPieces){
             if(p.xPos == xPos && p.yPos == yPos){
                 return p;

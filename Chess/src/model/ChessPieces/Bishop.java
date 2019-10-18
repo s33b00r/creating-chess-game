@@ -12,6 +12,18 @@ public class Bishop extends Piece {
 
     @Override
     public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
+        if(!isOnBoard(xPos, yPos)){
+            return false;
+        }
+        if(attackingFriendly(xPos, yPos, allPieces)){
+            return false;
+        }
+
+        int dx = getXPos() - xPos;
+        int dy = getYPos() - yPos;
+        if(Math.abs(dx) == Math.abs(dy) && dx != 0){
+            return !goingThroughAPieceDiagonally(xPos, yPos, allPieces);
+        }
         return false;
     }
 }
