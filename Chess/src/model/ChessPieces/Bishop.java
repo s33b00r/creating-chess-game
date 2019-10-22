@@ -8,6 +8,7 @@ public class Bishop extends Piece {
 
     public Bishop(int x, int y, boolean isWhite){
         super(x, y, isWhite, "B");
+        value = 3;
     }
 
     @Override
@@ -25,5 +26,10 @@ public class Bishop extends Piece {
             return !goingThroughAPieceDiagonally(xPos, yPos, allPieces);
         }
         return false;
+    }
+
+    @Override
+    public Bishop copy(){
+        return new Bishop(getXPos(), getYPos(), getIsWhite());
     }
 }

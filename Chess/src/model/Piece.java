@@ -17,6 +17,8 @@ abstract public class Piece {
 
     private String notation;
 
+    protected double value = -1;
+
     public Piece(int xPos, int yPos, boolean isWhite, String notation) {
         this.xPos = xPos;
         this.yPos = yPos;
@@ -25,6 +27,8 @@ abstract public class Piece {
         realXPos = calculateRealXPos();
         realYPos = calculateRealYPos();
     }
+
+    public abstract Piece copy();
 
     public int calculateRealXPos() {
         return WINDOW_WIDTH / 8 * this.xPos;
@@ -164,5 +168,9 @@ abstract public class Piece {
 
     public boolean getIsWhite() {
         return isWhite;
+    }
+
+    public double getValue() {
+        return value;
     }
 }

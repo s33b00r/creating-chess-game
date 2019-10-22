@@ -8,6 +8,7 @@ public class Queen extends Piece {
 
     public Queen(int xPos, int yPos, boolean isWhite){
         super(xPos, yPos, isWhite, "Q");
+        value = 9;
     }
 
     @Override
@@ -31,5 +32,10 @@ public class Queen extends Piece {
         }else {
             return false;
         }
+    }
+
+    @Override
+    public Queen copy(){
+        return new Queen(getXPos(), getYPos(), getIsWhite());
     }
 }

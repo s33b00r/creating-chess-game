@@ -10,6 +10,7 @@ public class King extends Piece {
 
     public King(int xPos, int yPos, boolean isWhite){
         super(xPos, yPos, isWhite, "K");
+        value = 100;
     }
 
     @Override
@@ -40,7 +41,6 @@ public class King extends Piece {
     }
 
     private boolean canCastle(int newX, List<Piece> allPieces) {
-        //TODO
         if(newX == 6){
             return findCastleRook(allPieces, 7);
         }else{
@@ -64,4 +64,10 @@ public class King extends Piece {
         return castleingRook != null;
     }
 
+    @Override
+    public King copy(){
+        King king = new King(getXPos(), getYPos(), getIsWhite());
+        king.hasMoved = hasMoved;
+        return king;
+    }
 }

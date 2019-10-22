@@ -8,6 +8,12 @@ public class Knight extends Piece {
 
     public Knight(int x, int y, boolean isWhite){
         super(x, y, isWhite, "N");
+        value = 3;
+    }
+
+    @Override
+    public Knight copy() {
+        return new Knight(getXPos(), getYPos(), getIsWhite());
     }
 
     @Override

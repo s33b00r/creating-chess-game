@@ -11,6 +11,7 @@ public class Pawn extends Piece {
 
     public Pawn(int x, int y, boolean isWhite){
         super(x, y, isWhite, "p");
+        value = 1;
     }
 
     @Override
@@ -63,13 +64,14 @@ public class Pawn extends Piece {
     }
 
     private boolean canMoveTwoSteps(List<Piece> allPieces, int newY){
-        return !goingThroughAPieceVertically(getXPos(), newY, allPieces) && !hasMoved;
+        return !goingThroughAPieceVertically(getXPos(), newY, allPieces) && !hasMoved &&
+        getPieceAt(getXPos(), newY, allPieces) == null;
     }
 
     private boolean canTakeDiagonal(List<Piece> allPieces, int newX, int newY){
         Piece attackedPiece = getPieceAt(newX, newY, allPieces);
         if(attackedPiece != null){
-            return attackedPiece.getIsWhite() == getIsWhite();
+            return attackedPiece.getIsWhite() != getIsWhite();
         }
 
         //En passant rules
@@ -91,5 +93,12 @@ public class Pawn extends Piece {
     private boolean canMoveUp(List<Piece> allPieces, int newY){
         Piece p = getPieceAt(getXPos(), newY, allPieces);
         return p == null;
+    }
+
+    @Override
+    public Pawn copy(){
+        Pawn pawn = new Pawn(getXPos(), getYPos(), getIsWhite());
+        pawn.hasMoved = hasMoved;
+        return pawn;
     }
 }

@@ -10,6 +10,7 @@ public class Rook extends Piece {
 
     public Rook(int x, int y, boolean isWhite){
         super(x, y, isWhite, "R");
+        value = 5;
     }
 
     @Override
@@ -44,5 +45,12 @@ public class Rook extends Piece {
 
     public boolean isHasMoved() {
         return hasMoved;
+    }
+
+    @Override
+    public Rook copy(){
+        Rook rook = new Rook(getXPos(), getYPos(), getIsWhite());
+        rook.hasMoved = hasMoved;
+        return rook;
     }
 }
