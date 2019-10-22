@@ -55,7 +55,6 @@ public class ChessGUI extends Application {
             @Override
             public void handle(long l) {
                 //Updates methods here
-                //TODO
                 render();
             }
         };
@@ -86,7 +85,7 @@ public class ChessGUI extends Application {
         fg.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         for(Piece p : chess.board.getAllPieces()){
             if(p != chess.getActivePiece()){
-                drawImage(p, p.getRealXPos(), p.getRealYPos(), WINDOW_WIDTH / 8, WINDOW_HEIGHT / 8);
+                drawImage(p, p.getRealXPos(), p.getRealYPos(), WINDOW_WIDTH / 8.0, WINDOW_HEIGHT / 8.0);
             }
         }
         if(chess.getActivePiece() != null){

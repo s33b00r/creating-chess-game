@@ -8,6 +8,7 @@ public class Queen extends Piece {
 
     public Queen(int xPos, int yPos, boolean isWhite){
         super(xPos, yPos, isWhite, "Q");
+        value = 9;
     }
 
     @Override
@@ -15,12 +16,26 @@ public class Queen extends Piece {
         if(!isOnBoard(xPos, yPos)){
             return false;
         }
-        if(attackingFriendly(allPieces)){
+        if(attackingFriendly(xPos, yPos, allPieces)){
             return false;
         }
-        if(isGoingThroughAPieceDiagonally(xPos, yPos, allPieces)){
+
+        int dx = getXPos() - xPos;
+        int dy = getYPos() - yPos;
+
+        if(dx == 0 && dy != 0){
+            return !goingThroughAPieceVertically(xPos, yPos, allPieces);
+        }else if(dx != 0 && dy == 0){
+            return !goingThroughAPieceHorizontally(xPos, yPos, allPieces);
+        }else if (Math.abs(dx) == Math.abs(dy) && dx != 0){
+            return !goingThroughAPieceDiagonally(xPos, yPos, allPieces);
+        }else {
             return false;
         }
-        return true;
+    }
+
+    @Override
+    public Queen copy(){
+        return new Queen(getXPos(), getYPos(), getIsWhite());
     }
 }

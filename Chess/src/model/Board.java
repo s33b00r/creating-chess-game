@@ -4,6 +4,7 @@ import model.ChessPieces.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static view.ChessGUI.WINDOW_HEIGHT;
 import static view.ChessGUI.WINDOW_WIDTH;
@@ -70,5 +71,9 @@ public class Board {
 
     public List<Piece> getAllPieces() {
         return allPieces;
+    }
+
+    public void removePiece(Piece takenPiece) {
+        allPieces = allPieces.stream().filter(p -> p != takenPiece).collect(Collectors.toList());
     }
 }

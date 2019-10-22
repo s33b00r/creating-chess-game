@@ -10,6 +10,13 @@ public class King extends Piece {
 
     public King(int xPos, int yPos, boolean isWhite){
         super(xPos, yPos, isWhite, "K");
+        value = 100;
+    }
+
+    @Override
+    public void move(int xPos, int yPos) {
+        super.move(xPos, yPos);
+        hasMoved = true;
     }
 
     @Override
@@ -17,16 +24,14 @@ public class King extends Piece {
         if(!isOnBoard(xPos, yPos)){
              return false;
         }
-        if(attackingFriendly(allPieces)){
+        if(attackingFriendly(xPos, yPos, allPieces)){
             return false;
         }
 
         //Castle rules
         if(!hasMoved){
-            if(xPos == 2 || xPos == 6){
-                if(!canCastle()/*TODO*/){
-                    return false;
-                }
+            if((xPos == 2 || xPos == 6) && yPos == getYPos()){
+                return canCastle(xPos, allPieces);
             }
         }
 
@@ -35,8 +40,34 @@ public class King extends Piece {
                 Math.abs(getYPos() - yPos) <= 1;
     }
 
-    private boolean canCastle() {
-        //TODO
-        return false;
+    private boolean canCastle(int newX, List<Piece> allPieces) {
+        if(newX == 6){
+            return findCastleRook(allPieces, 7);
+        }else{
+            return findCastleRook(allPieces, 0);
+        }
+    }
+
+    private boolean findCastleRook(List<Piece> allPieces, int rookPos){
+
+        Piece castleingRook = null;
+        for(Piece p : allPieces){
+            if(p instanceof Rook){
+                Rook rook = (Rook) p;
+                if(!rook.isHasMoved() &&
+                        rook.getIsWhite() == getIsWhite() &&
+                        rook.getXPos() == rookPos){
+                    castleingRook = rook;
+                }
+            }
+        }
+        return castleingRook != null;
+    }
+
+    @Override
+    public King copy(){
+        King king = new King(getXPos(), getYPos(), getIsWhite());
+        king.hasMoved = hasMoved;
+        return king;
     }
 }
