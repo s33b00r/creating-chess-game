@@ -8,49 +8,31 @@ public class Rook extends Piece {
 
     private boolean hasMoved = false;
 
-    public Rook(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "R");
-        value = 5;
+    public Rook(boolean isWhite) {
+        super(isWhite);
     }
 
-    @Override
-    public void move(int xPos, int yPos) {
-        super.move(xPos, yPos);
-        hasMoved = true;
-    }
-
-    @Override
-    public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
+    public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
 
         if(!isOnBoard(xPos, yPos)){
             return false;
         }
 
-        if(attackingFriendly(xPos, yPos, allPieces)){
+        if(attackingFriendly(curX, curY, xPos, yPos, board)){
             return false;
         }
 
-        int dx = getXPos() - xPos;
-        int dy = getYPos() - yPos;
+        int dx = curX - xPos;
+        int dy = curY - yPos;
 
         if(dx != 0 && dy == 0){
-            return !goingThroughAPieceHorizontally(xPos, yPos, allPieces);
+            return !goingThroughAPieceHorizontally(curX, curY, xPos, board);
         }
         if(dy != 0 && dx == 0){
-            return !goingThroughAPieceVertically(xPos, yPos, allPieces);
+            return !goingThroughAPieceVertically(curX, curY, yPos, board);
         }
 
         return false;
     }
 
-    public boolean isHasMoved() {
-        return hasMoved;
-    }
-
-    @Override
-    public Rook copy(){
-        Rook rook = new Rook(getXPos(), getYPos(), getIsWhite());
-        rook.hasMoved = hasMoved;
-        return rook;
-    }
 }

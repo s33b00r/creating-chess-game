@@ -6,26 +6,19 @@ import java.util.List;
 
 public class Knight extends Piece {
 
-    public Knight(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "N");
-        value = 3;
+    public Knight(boolean isWhite){
+        super(isWhite);
     }
 
-    @Override
-    public Knight copy() {
-        return new Knight(getXPos(), getYPos(), getIsWhite());
-    }
-
-    @Override
-    public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
+    public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
         if(!isOnBoard(xPos, yPos)){
             return false;
         }
-        if(attackingFriendly(xPos, yPos, allPieces)){
+        if(attackingFriendly(curX, curY, xPos, yPos, board)){
             return false;
         }
-        int dx = Math.abs(getXPos() - xPos);
-        int dy = Math.abs(getYPos() - yPos);
+        int dx = Math.abs(curX - xPos);
+        int dy = Math.abs(curY - yPos);
         return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
     }
 }
