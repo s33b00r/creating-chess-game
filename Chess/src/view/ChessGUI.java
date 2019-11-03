@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 
+import java.awt.*;
 
 
 public class ChessGUI extends Application {
@@ -26,6 +27,8 @@ public class ChessGUI extends Application {
 
     private Chess chess;
 
+    private double mouseX;
+    private double mouseY;
 
     public static void main(String[] args) {
         launch(args);
@@ -75,30 +78,35 @@ public class ChessGUI extends Application {
     }
 
     private void mouseMoved(MouseEvent mouse){
-        if(chess.getActivePiece() != null){
-            chess.mouseMovementHandler(mouse.getX(), mouse.getY());
-        }
+        mouseX = mouse.getX();
+        mouseY = mouse.getY();
     }
 
 
     private void render(){
         fg.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        for(Piece p : chess.board.getAllPieces()){
-            if(p != chess.getActivePiece()){
-                drawImage(p, p.getRealXPos(), p.getRealYPos(), WINDOW_WIDTH / 8.0, WINDOW_HEIGHT / 8.0);
+
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                char notation = chess.board.getBoard()[x][y];
+                if(notation != '-'){
+                    Piece p = Board.getPieceType(notation);
+                    double realX = WINDOW_WIDTH * (x / 8.0);
+                    double realY = WINDOW_HEIGHT * ((7 - y) / 8.0);
+                    drawImage(p, realX, realY, WINDOW_WIDTH / 8.0, WINDOW_HEIGHT / 8.0);
+                }
             }
         }
-        if(chess.getActivePiece() != null){
-            double width = WINDOW_WIDTH * 1.2 / 8;
-            double height = WINDOW_HEIGHT * 1.2 / 8;
-            double xPos = chess.getActivePiece().getRealXPos() - width / 2;
-            double yPos = chess.getActivePiece().getRealYPos() - height / 2;
-            drawImage(chess.getActivePiece(), xPos, yPos, width, height);
+        if(chess.getActivePieceNotation() != '-'){
+            Piece p = Board.getPieceType(chess.getActivePieceNotation());
+            double xPos = mouseX - WINDOW_WIDTH / 16.0;
+            double yPos = mouseY - WINDOW_HEIGHT / 16.0;
+            drawImage(p, xPos, yPos, WINDOW_WIDTH / 8.0, WINDOW_HEIGHT / 8.0);
         }
     }
 
     private void drawImage(Piece p, double x, double y, double width, double height){
-        Image pieceImage = assets.get(p, p.getIsWhite());
+        Image pieceImage = assets.get(p, p.isWhite());
         fg.drawImage(pieceImage, x, y, width, height);
     }
 

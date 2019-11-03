@@ -1,176 +1,99 @@
 package model;
 
+import model.ChessPieces.*;
+
 import java.util.List;
 
-import static view.ChessGUI.WINDOW_HEIGHT;
-import static view.ChessGUI.WINDOW_WIDTH;
-
 abstract public class Piece {
-    //Position on the board (goes from 0 - 7)
-    private int xPos;
-    private int yPos;
-    //Position on the window screen
-    private int realXPos;
-    private int realYPos;
 
     private boolean isWhite;
 
-    private String notation;
-
-    protected double value = -1;
-
-    public Piece(int xPos, int yPos, boolean isWhite, String notation) {
-        this.xPos = xPos;
-        this.yPos = yPos;
+    public Piece(boolean isWhite){
         this.isWhite = isWhite;
-        this.notation = notation;
-        realXPos = calculateRealXPos();
-        realYPos = calculateRealYPos();
     }
 
-    public abstract Piece copy();
-
-    public int calculateRealXPos() {
-        return WINDOW_WIDTH / 8 * this.xPos;
+    public static boolean canMove(char curNot, int curX, int curY, int xPos, int yPos, char[][] board){
+        switch (Character.toLowerCase(curNot)){
+            case 'k':
+                return King.canMove(curX, curY, xPos, yPos, board);
+            case 'q':
+                return Queen.canMove(curX, curY, xPos, yPos, board);
+            case 'b':
+                return Bishop.canMove(curX, curY, xPos, yPos, board);
+            case 'r':
+                return Rook.canMove(curX, curY, xPos, yPos, board);
+            case 'n':
+                return Knight.canMove(curX, curY, xPos, yPos, board);
+            case 'p':
+                return Pawn.canMove(curNot, curX, curY, xPos, yPos, board);
+            default:
+                return false;
+        }
     }
 
-    public abstract boolean canMove(int xPos, int yPos, List<Piece> allPieces);
-
-    public void move(int xPos, int yPos) {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        realXPos = calculateRealXPos();
-        realYPos = calculateRealYPos();
-    }
-
-    boolean isPointingInside(int x, int y){
-        return x == xPos && y == yPos;
-    }
-
-    public int calculateRealYPos() {
-        return WINDOW_HEIGHT / 8 * (7 - this.yPos);
-    }
-
-    protected boolean isOnBoard(int x, int y) {
+    //######################################################################################
+    //Piece movement logic for rules
+    //######################################################################################
+    protected static boolean isOnBoard(int x, int y) {
         return x >= 0 && x < 8 &&
                 y >= 0 && y < 8;
     }
 
-    protected boolean attackingFriendly(int newX, int newY, List<Piece> allPieces) {
-        for (Piece p : allPieces) {
-            if (p.getIsWhite() == isWhite) {
-                if (p.xPos == newX && p.yPos == newY) {
-                    return true;
-                }
-            }
+    protected static boolean attackingFriendly(int curX, int curY, int newX, int newY, char[][] board) {
+        if(board[newX][newY] == '-'){
+            return false;
         }
-        return false;
+        return Character.isLowerCase(board[newX][newY]) == Character.isLowerCase(board[curX][curY]);
     }
 
     //Expects that the piece is moving in that specific direction for these methods
-    //######################################################################################
-    protected boolean goingThroughAPieceDiagonally(int x, int y, List<Piece> allPieces) {
-        int dX = x - xPos;
-        int dY = y - yPos;
+    protected static boolean goingThroughAPieceDiagonally(int curX, int curY, int newX, int newY, char[][] board) {
+        int dx = newX - curX;
+        int dy = newY - curY;
 
-        if(Math.abs(dX) != Math.abs(dY) || dX == 0){
-            System.err.println("Invalid input");
-        }
+        int stepDirX = dx / Math.abs(dx);
+        int stepDirY = dy / Math.abs(dy);
 
-        int stepDirectionX = dX / Math.abs(dX);
-        int stepDirectionY = dY / Math.abs(dY);
-        int stepsX = stepDirectionX;
-        int stepsY = stepDirectionY;
+        int currentXTest = stepDirX + curX;
+        int currentYTest = stepDirY + curY;
 
-        while(dX != stepsX){
-            if(getPieceAt(stepsX + xPos, stepsY + yPos, allPieces) != null){
+        while (currentXTest != newX){
+            if(board[currentXTest][currentYTest] != '-'){
                 return true;
             }
-            stepsX += stepDirectionX;
-            stepsY += stepDirectionY;
+            currentXTest += stepDirX;
+            currentYTest += stepDirY;
+        }
+
+        return false;
+    }
+    protected static boolean goingThroughAPieceHorizontally(int curX, int curY, int newX, char[][] board) {
+        int stepDirectionX = (newX - curX) / Math.abs(newX - curX);
+
+        int currentXTest = curX + stepDirectionX;
+        while (currentXTest != newX){
+            if(board[currentXTest][curY] != '-'){
+                return true;
+            }
+            currentXTest += stepDirectionX;
+        }
+        return false;
+    }
+    protected static boolean goingThroughAPieceVertically(int curX, int curY, int newY, char[][] board) {
+        int stepDirectionY = (newY - curY) / Math.abs(newY - curY);
+
+        int currentYTest = curY + stepDirectionY;
+        while (currentYTest != newY){
+            if(board[curX][currentYTest] != '-'){
+                return true;
+            }
+            currentYTest += stepDirectionY;
         }
         return false;
     }
 
-    protected boolean goingThroughAPieceHorizontally(int newX, int newY, List<Piece> allPieces) {
-        int dx = newX - xPos;
-        int dy = newY - yPos;
 
-        if(dy != 0 || dx == 0){
-            System.err.println("Invalid input");
-        }
-
-        int stepDirectionX = Math.abs(dx) / dx;
-        int stepsX = stepDirectionX;
-
-        while (stepsX != dx){
-            if(getPieceAt(stepsX + xPos, yPos, allPieces) != null){
-                return true;
-            }
-            stepsX += stepDirectionX;
-        }
-        return false;
-    }
-
-    protected boolean goingThroughAPieceVertically(int newX, int newY, List<Piece> allPieces) {
-        int dx = xPos - newX;
-        int dy = newY - yPos;
-
-        if(dx != 0 || dy == 0){
-            System.err.println("Invalid input");
-        }
-
-        int stepDirectionY = Math.abs(dy) / dy;
-        int stepsY = stepDirectionY;
-
-        while (stepsY != dy){
-            if(getPieceAt(xPos, stepsY + yPos, allPieces) != null){
-                return true;
-            }
-            stepsY += stepDirectionY;
-        }
-        return false;
-    }
-    //######################################################################################
-
-    protected Piece getPieceAt(int xPos, int yPos, List<Piece> allPieces){
-        for(Piece p : allPieces){
-            if(p.xPos == xPos && p.yPos == yPos){
-                return p;
-            }
-        }
-        return null;
-    }
-
-    public int getXPos() {
-        return xPos;
-    }
-
-    public int getYPos() {
-        return yPos;
-    }
-
-    public int getRealXPos() {
-        return realXPos;
-    }
-
-    public int getRealYPos() {
-        return realYPos;
-    }
-
-    public void setRealXPos(int realXPos) {
-        this.realXPos = realXPos;
-    }
-
-    public void setRealYPos(int realYPos) {
-        this.realYPos = realYPos;
-    }
-
-    public boolean getIsWhite() {
+    public boolean isWhite() {
         return isWhite;
-    }
-
-    public double getValue() {
-        return value;
     }
 }

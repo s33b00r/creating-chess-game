@@ -6,30 +6,24 @@ import java.util.List;
 
 public class Bishop extends Piece {
 
-    public Bishop(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "B");
-        value = 3;
+    public Bishop(boolean isWhite){
+        super(isWhite);
     }
 
-    @Override
-    public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
+    public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
         if(!isOnBoard(xPos, yPos)){
             return false;
         }
-        if(attackingFriendly(xPos, yPos, allPieces)){
+        if(attackingFriendly(curX, curY, xPos, yPos, board)){
             return false;
         }
 
-        int dx = getXPos() - xPos;
-        int dy = getYPos() - yPos;
+        int dx = curX - xPos;
+        int dy = curY - yPos;
         if(Math.abs(dx) == Math.abs(dy) && dx != 0){
-            return !goingThroughAPieceDiagonally(xPos, yPos, allPieces);
+            return !goingThroughAPieceDiagonally(curX, curY, xPos, yPos, board);
         }
         return false;
     }
 
-    @Override
-    public Bishop copy(){
-        return new Bishop(getXPos(), getYPos(), getIsWhite());
-    }
 }

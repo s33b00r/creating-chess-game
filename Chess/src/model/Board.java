@@ -12,24 +12,13 @@ import static view.ChessGUI.WINDOW_WIDTH;
 public class Board {
 
     public Board(){
-        allPieces = newStandardSetup();
+        board = newStandardSetup();
     }
 
-    private List<Piece> allPieces;
+    private char[][] board;
 
     public void reset(){
-        allPieces = newStandardSetup();
-    }
-
-    public Piece getPieceAt(double x, double y){
-        int xSquare = convertRealX(x);
-        int ySquare = convertRealY(y);
-        for(Piece p : allPieces){
-            if(p.isPointingInside(xSquare, ySquare)){
-                return p;
-            }
-        }
-        return null;
+        board = newStandardSetup();
     }
 
     public static int convertRealX(double x){
@@ -39,41 +28,64 @@ public class Board {
         return 7 - (int) Math.floor(y * 8 / WINDOW_HEIGHT);
     }
 
-    private List<Piece> newStandardSetup(){
-
-        ArrayList<Piece> pieces = new ArrayList<>();
-        pieces.add(new King(4, 0, true));
-        pieces.add(new King(4, 7, false));
-        pieces.add(new Queen(3, 0, true));
-        pieces.add(new Queen(3, 7, false));
-        pieces.add(new Rook(0, 0, true));
-        pieces.add(new Rook(7, 0, true));
-        pieces.add(new Rook(0, 7, false));
-        pieces.add(new Rook(7, 7, false));
-        pieces.add(new Bishop(2, 0, true));
-        pieces.add(new Bishop(5, 0, true));
-        pieces.add(new Bishop(2, 7, false));
-        pieces.add(new Bishop(5, 7, false));
-        pieces.add(new Knight(1, 0, true));
-        pieces.add(new Knight(6, 0, true));
-        pieces.add(new Knight(1, 7, false));
-        pieces.add(new Knight(6, 7, false));
-
-        boolean isWhite = false;
-        for (int i = 0; i < 2; i++) {
-            isWhite = !isWhite;
-            for (int j = 0; j < 8; j++) {
-                pieces.add(new Pawn(j, 1 + 5*i, isWhite));
+    private char[][] newStandardSetup() {
+        char[][] board = new char[8][8];
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                board[x][y] = '-';
             }
         }
-        return pieces;
+
+        board[0][0] = 'R';
+        board[1][0] = 'N';
+        board[2][0] = 'B';
+        board[3][0] = 'Q';
+        board[4][0] = 'K';
+        board[5][0] = 'B';
+        board[6][0] = 'N';
+        board[7][0] = 'R';
+
+        board[0][7] = 'r';
+        board[1][7] = 'n';
+        board[2][7] = 'b';
+        board[3][7] = 'q';
+        board[4][7] = 'k';
+        board[5][7] = 'b';
+        board[6][7] = 'n';
+        board[7][7] = 'r';
+
+        for (int j = 0; j < 8; j++) {
+            board[j][1] = 'P';
+        }
+        for (int j = 0; j < 8; j++) {
+            board[j][6] = 'p';
+        }
+
+        return board;
     }
 
-    public List<Piece> getAllPieces() {
-        return allPieces;
+    public static Piece getPieceType(char pieceNotation){
+        boolean isWhite = !Character.isLowerCase(pieceNotation);
+        switch (Character.toLowerCase(pieceNotation)){
+            case 'k':
+                return new King(isWhite);
+            case 'q':
+                return new Queen(isWhite);
+            case 'b':
+                return new Bishop(isWhite);
+            case 'r':
+                return new Rook(isWhite);
+            case 'n':
+                return new Knight(isWhite);
+            case 'p':
+                return new Pawn(isWhite);
+            default:
+                return null;
+        }
     }
 
-    public void removePiece(Piece takenPiece) {
-        allPieces = allPieces.stream().filter(p -> p != takenPiece).collect(Collectors.toList());
+    public char[][] getBoard(){
+        return board;
     }
+
 }

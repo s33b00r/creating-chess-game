@@ -6,36 +6,30 @@ import java.util.List;
 
 public class Queen extends Piece {
 
-    public Queen(int xPos, int yPos, boolean isWhite){
-        super(xPos, yPos, isWhite, "Q");
-        value = 9;
-    }
+   public Queen(boolean isWhite){
+       super(isWhite);
+   }
 
-    @Override
-    public boolean canMove(int xPos, int yPos, List<Piece> allPieces) {
+    public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
         if(!isOnBoard(xPos, yPos)){
             return false;
         }
-        if(attackingFriendly(xPos, yPos, allPieces)){
+        if(attackingFriendly(curX, curY, xPos, yPos, board)){
             return false;
         }
 
-        int dx = getXPos() - xPos;
-        int dy = getYPos() - yPos;
+        int dx = curX - xPos;
+        int dy = curY - yPos;
 
         if(dx == 0 && dy != 0){
-            return !goingThroughAPieceVertically(xPos, yPos, allPieces);
+            return !goingThroughAPieceVertically(curX, curY, yPos, board);
         }else if(dx != 0 && dy == 0){
-            return !goingThroughAPieceHorizontally(xPos, yPos, allPieces);
+            return !goingThroughAPieceHorizontally(curX, curY, xPos, board);
         }else if (Math.abs(dx) == Math.abs(dy) && dx != 0){
-            return !goingThroughAPieceDiagonally(xPos, yPos, allPieces);
+            return !goingThroughAPieceDiagonally(curX, curY, xPos, yPos, board);
         }else {
             return false;
         }
     }
 
-    @Override
-    public Queen copy(){
-        return new Queen(getXPos(), getYPos(), getIsWhite());
-    }
 }
