@@ -20,11 +20,19 @@ public class Chess {
 
     public Chess(Board board){
         this.board = board;
-        miniMaxAI = new MiniMaxAI(false, 5);
+        miniMaxAI = new MiniMaxAI(false, 6);
     }
 
     //TODO: Make it more readable and more "logic"
     public void mouseClickHandler(double mouseX, double mouseY){
+
+        if(miniMaxAI.isWhite() == whitesTurn){
+
+            if(miniMaxAI.getT().getState() == Thread.State.TERMINATED){
+                whitesTurn = !whitesTurn;
+            }
+        }
+
         if(activePieceNotation != '-'){
             int nextXPos = Board.convertRealX(mouseX);
             int nextYPos = Board.convertRealY(mouseY);
@@ -32,9 +40,8 @@ public class Chess {
                 board.getBoard()[nextXPos][nextYPos] = activePieceNotation;
                 whitesTurn = !whitesTurn;
                 if(!whitesTurn){
-                    miniMaxAI.calculateMoves(board);
-                    miniMaxAI.move(board.getBoard());
-                    whitesTurn = !whitesTurn;
+                    miniMaxAI.activeBoard = board;
+                    miniMaxAI.calculateWithThread();
                 }
             }else{
                 board.getBoard()[activePieceX][activePieceY] = activePieceNotation;
@@ -56,4 +63,5 @@ public class Chess {
     public char getActivePieceNotation() {
         return activePieceNotation;
     }
+
 }

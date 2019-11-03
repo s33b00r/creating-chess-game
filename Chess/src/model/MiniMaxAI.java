@@ -5,20 +5,35 @@ import model.ChessPieces.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
-public class MiniMaxAI {
+public class MiniMaxAI implements Runnable{
 
     private boolean isWhite;
     private int maxSteps;
 
     private NextMove bestMove;
 
+    public Board activeBoard;
+
+    private String threadName = "calculateMoves";
+    private Thread t;
+
     public MiniMaxAI(boolean isWhite, int maxSteps){
         this.isWhite = isWhite;
         this.maxSteps = maxSteps;
     }
+
+    public void calculateWithThread(){
+        t = new Thread(this, threadName);
+        t.start();
+    }
+
+    public void run(){
+        calculateMoves(activeBoard);
+        move(activeBoard.getBoard());
+
+    }
+
 
     public void calculateMoves(Board board){
         int amountOfMovesAvailable = 0;
@@ -449,4 +464,11 @@ public class MiniMaxAI {
         return returnValue;
     }
 
+    public boolean isWhite() {
+        return isWhite;
+    }
+
+    public Thread getT() {
+        return t;
+    }
 }
