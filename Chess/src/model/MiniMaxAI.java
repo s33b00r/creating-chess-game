@@ -28,6 +28,7 @@ public class MiniMaxAI implements Runnable{
         t.start();
     }
 
+    @Override
     public void run(){
         calculateMoves(activeBoard);
         move(activeBoard.getBoard());
@@ -35,7 +36,7 @@ public class MiniMaxAI implements Runnable{
     }
 
 
-    public void calculateMoves(Board board){
+    private void calculateMoves(Board board){
         int amountOfMovesAvailable = 0;
         int curXBest = -1;
         int curYBest = -1;
@@ -118,7 +119,7 @@ public class MiniMaxAI implements Runnable{
     }
 
 
-    private class NextMove{
+    private static class NextMove{
         public int nextX;
         public int nextY;
         public int currentX, currentY;
@@ -145,7 +146,8 @@ public class MiniMaxAI implements Runnable{
                    if(Character.isLowerCase(currentPiece) == !isWhite){
                         switch (Character.toLowerCase(currentPiece)){
                             case 'k':
-                                returnList.addAll(getAllKingMoves(x, y, board));
+                            case 'm':
+                                returnList.addAll(getAllKingMoves(x, y, board, currentPiece));
                                 break;
                             case 'q':
                                 returnList.addAll(getAllQueenMoves(x, y, board));
@@ -154,6 +156,7 @@ public class MiniMaxAI implements Runnable{
                                 returnList.addAll(getAllBishopMoves(x, y, board));
                                 break;
                             case 'r':
+                            case 'h':
                                 returnList.addAll(getAllRookMoves(x, y, board));
                                 break;
                             case 'n':
@@ -172,13 +175,13 @@ public class MiniMaxAI implements Runnable{
         return returnList;
     }
 
-    private List<NextMove> getAllKingMoves(int curX, int curY, char[][] board){
+    private List<NextMove> getAllKingMoves(int curX, int curY, char[][] board, char not){
         List<NextMove> returnList = new ArrayList<>();
         //normal movement
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if(!(i == 0 && j == 0)){
-                    if(King.canMove(curX, curY, curX + i, curY + j, board)){
+                    if(King.canMove(curX, curY, curX + i, curY + j, board, not)){
                         NextMove nextMove = new NextMove(curX, curY, curX + i, curY + j);
                         returnList.add(nextMove);
                     }
@@ -186,6 +189,14 @@ public class MiniMaxAI implements Runnable{
             }
         }
         //TODO: castling movement
+        if(King.canMove(curX, curY, curX + 2, curY, board, not)){
+            NextMove nextMove = new NextMove(curX, curY, curX + 2, curY);
+            returnList.add(nextMove);
+        }
+        if(King.canMove(curX, curY, curX - 2, curY, board, not)){
+            NextMove nextMove = new NextMove(curX, curY, curX - 2, curY);
+            returnList.add(nextMove);
+        }
 
         return returnList;
     }
@@ -386,13 +397,39 @@ public class MiniMaxAI implements Runnable{
         return totalPoints;
     }
 
-    public void move(char[][] board){
+    private void move(char[][] board){
         board[bestMove.nextX][bestMove.nextY] = board[bestMove.currentX][bestMove.currentY];
         board[bestMove.currentX][bestMove.currentY] = '-';
     }
 
     private void move(NextMove nm, char[][] board){
-        board[nm.nextX][nm.nextY] = board[nm.currentX][nm.currentY];
+        char currentChar = board[nm.currentX][nm.currentY];
+
+        if(Board.didCastleShort(currentChar, nm.currentX, nm.currentY, nm.nextX, nm.nextY)){
+            board[5][nm.currentY] = board[7][nm.currentY];
+            board[7][nm.currentY] = '-';
+        }
+        if(Board.didCastleLong(currentChar, nm.currentX, nm.currentY, nm.nextX, nm.nextY)){
+            board[3][nm.currentY] = board[3][nm.currentY];
+            board[0][nm.currentY] = '-';
+        }
+        switch (currentChar){
+            case 'K':
+                currentChar = 'M';
+                break;
+            case 'k':
+                currentChar = 'm';
+                break;
+            case 'R':
+                currentChar = 'H';
+                break;
+            case 'r':
+                currentChar = 'h';
+                break;
+            default:
+                break;
+        }
+        board[nm.nextX][nm.nextY] = currentChar;
         board[nm.currentX][nm.currentY] = '-';
     }
 

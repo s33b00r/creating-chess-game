@@ -1,8 +1,6 @@
 package view;
 
-import model.Board;
-import model.Chess;
-import model.Piece;
+import model.*;
 import view.theme.Standard;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -16,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class ChessGUI extends Application {
