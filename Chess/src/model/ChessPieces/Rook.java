@@ -2,8 +2,6 @@ package model.ChessPieces;
 
 import model.Piece;
 
-import java.util.List;
-
 public class Rook extends Piece {
 
     private boolean hasMoved = false;
@@ -14,7 +12,7 @@ public class Rook extends Piece {
 
     public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
 
-        if(!isOnBoard(xPos, yPos)){
+        if(isNotOnBoard(xPos, yPos)){
             return false;
         }
 
@@ -29,7 +27,7 @@ public class Rook extends Piece {
             return !goingThroughAPieceHorizontally(curX, curY, xPos, board);
         }
         if(dy != 0 && dx == 0){
-            return !goingThroughAPieceVertically(curX, curY, yPos, board);
+            return notGoingThroughAPieceVertically(curX, curY, yPos, board);
         }
 
         return false;

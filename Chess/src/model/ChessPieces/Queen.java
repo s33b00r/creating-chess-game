@@ -2,8 +2,6 @@ package model.ChessPieces;
 
 import model.Piece;
 
-import java.util.List;
-
 public class Queen extends Piece {
 
    public Queen(boolean isWhite){
@@ -11,7 +9,7 @@ public class Queen extends Piece {
    }
 
     public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
-        if(!isOnBoard(xPos, yPos)){
+        if(isNotOnBoard(xPos, yPos)){
             return false;
         }
         if(attackingFriendly(curX, curY, xPos, yPos, board)){
@@ -22,11 +20,11 @@ public class Queen extends Piece {
         int dy = curY - yPos;
 
         if(dx == 0 && dy != 0){
-            return !goingThroughAPieceVertically(curX, curY, yPos, board);
+            return notGoingThroughAPieceVertically(curX, curY, yPos, board);
         }else if(dx != 0 && dy == 0){
             return !goingThroughAPieceHorizontally(curX, curY, xPos, board);
         }else if (Math.abs(dx) == Math.abs(dy) && dx != 0){
-            return !goingThroughAPieceDiagonally(curX, curY, xPos, yPos, board);
+            return notGoingThroughAPieceDiagonally(curX, curY, xPos, yPos, board);
         }else {
             return false;
         }

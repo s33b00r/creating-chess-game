@@ -20,7 +20,7 @@ public class Chess {
 
     public Chess(Board board){
         this.board = board;
-        miniMaxAI = new MiniMaxAI(false, 6);
+        miniMaxAI = new MiniMaxAI(false, 5);
     }
 
     //TODO: Make it more readable and more "logic"
@@ -38,6 +38,13 @@ public class Chess {
             int nextYPos = Board.convertRealY(mouseY);
             if(Piece.canMove(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos, board.getBoard())){
                 board.getBoard()[nextXPos][nextYPos] = activePieceNotation;
+                if(Board.didCastleShort(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos)){
+                    board.getBoard()[5][activePieceY] = whitesTurn ? 'H' : 'h';
+                    board.getBoard()[7][activePieceY] = '-';
+                }else if(Board.didCastleLong(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos)){
+                    board.getBoard()[3][activePieceY] = whitesTurn ? 'H' : 'h';
+                    board.getBoard()[0][activePieceY] = '-';
+                }
                 whitesTurn = !whitesTurn;
                 if(!whitesTurn){
                     miniMaxAI.activeBoard = board;

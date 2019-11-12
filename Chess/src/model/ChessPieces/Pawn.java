@@ -1,9 +1,6 @@
 package model.ChessPieces;
 
-import model.Chess;
 import model.Piece;
-
-import java.util.List;
 
 public class Pawn extends Piece {
 
@@ -12,7 +9,7 @@ public class Pawn extends Piece {
     }
 
     public static boolean canMove(char curNot, int curX, int curY, int xPos, int yPos, char[][] board) {
-        if (!isOnBoard(xPos, yPos)) {
+        if (isNotOnBoard(xPos, yPos)) {
             return false;
         }
 
@@ -22,7 +19,7 @@ public class Pawn extends Piece {
 
         if((isWhite && dy < 0) || (!isWhite && dy > 0)){
             if(Math.abs(dy) == 2 && (curY == 1 || curY == 6)){
-                return dx == 0 && !goingThroughAPieceVertically(curX, curY, yPos, board) &&
+                return dx == 0 && notGoingThroughAPieceVertically(curX, curY, yPos, board) &&
                             board[xPos][yPos] == '-';
             }
             if(Math.abs(dy) == 1){

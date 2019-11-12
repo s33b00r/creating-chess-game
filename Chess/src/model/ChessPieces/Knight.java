@@ -2,8 +2,6 @@ package model.ChessPieces;
 
 import model.Piece;
 
-import java.util.List;
-
 public class Knight extends Piece {
 
     public Knight(boolean isWhite){
@@ -11,7 +9,7 @@ public class Knight extends Piece {
     }
 
     public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
-        if(!isOnBoard(xPos, yPos)){
+        if(isNotOnBoard(xPos, yPos)){
             return false;
         }
         if(attackingFriendly(curX, curY, xPos, yPos, board)){

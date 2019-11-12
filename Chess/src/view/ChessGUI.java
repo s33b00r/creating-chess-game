@@ -40,8 +40,6 @@ public class ChessGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        WeightData wd = (WeightData) StorageHandling.getData(WeightData.FILENAME);
-
         Board board = new Board();
         chess = new Chess(board);
 

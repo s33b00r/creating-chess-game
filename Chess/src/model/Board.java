@@ -9,6 +9,16 @@ import java.util.stream.Collectors;
 import static view.ChessGUI.WINDOW_HEIGHT;
 import static view.ChessGUI.WINDOW_WIDTH;
 
+/**
+ * King = 'K' or 'M' if has moved
+ * Queen = 'Q'
+ * Rook = 'R' or 'H' if has moved
+ * Bishop = 'B'
+ * Knight = 'N'
+ * Pawn = 'P'
+ * Nothing = '-' or 'E' if can do En passant to that square
+ */
+
 public class Board {
 
     public Board(){
@@ -68,12 +78,14 @@ public class Board {
         boolean isWhite = !Character.isLowerCase(pieceNotation);
         switch (Character.toLowerCase(pieceNotation)){
             case 'k':
+            case 'm':
                 return new King(isWhite);
             case 'q':
                 return new Queen(isWhite);
             case 'b':
                 return new Bishop(isWhite);
             case 'r':
+            case 'h':
                 return new Rook(isWhite);
             case 'n':
                 return new Knight(isWhite);
@@ -86,6 +98,23 @@ public class Board {
 
     public char[][] getBoard(){
         return board;
+    }
+
+    public static boolean didCastleShort(char not, int beX, int beY, int curX, int curY){
+        return Character.toLowerCase(not) == 'k' && curX - beX == 2 && beY == curY;
+    }
+    public static boolean didCastleLong(char not, int beX, int beY, int curX, int curY){
+        return Character.toLowerCase(not) == 'k' && beX - curX == 2 && beY == curY;
+    }
+
+    public void clearEnPassantNot(char[][] board){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if(board[i][j] == 'E') {
+                    board[i][j] = '-';
+                }
+            }
+        }
     }
 
 }

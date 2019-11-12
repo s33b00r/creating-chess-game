@@ -2,8 +2,6 @@ package model;
 
 import model.ChessPieces.*;
 
-import java.util.List;
-
 abstract public class Piece {
 
     private boolean isWhite;
@@ -15,12 +13,14 @@ abstract public class Piece {
     public static boolean canMove(char curNot, int curX, int curY, int xPos, int yPos, char[][] board){
         switch (Character.toLowerCase(curNot)){
             case 'k':
-                return King.canMove(curX, curY, xPos, yPos, board);
+            case 'm':
+                return King.canMove(curX, curY, xPos, yPos, board, curNot);
             case 'q':
                 return Queen.canMove(curX, curY, xPos, yPos, board);
             case 'b':
                 return Bishop.canMove(curX, curY, xPos, yPos, board);
             case 'r':
+            case 'h':
                 return Rook.canMove(curX, curY, xPos, yPos, board);
             case 'n':
                 return Knight.canMove(curX, curY, xPos, yPos, board);
@@ -34,9 +34,9 @@ abstract public class Piece {
     //######################################################################################
     //Piece movement logic for rules
     //######################################################################################
-    protected static boolean isOnBoard(int x, int y) {
-        return x >= 0 && x < 8 &&
-                y >= 0 && y < 8;
+    protected static boolean isNotOnBoard(int x, int y) {
+        return x < 0 || x >= 8 ||
+                y < 0 || y >= 8;
     }
 
     protected static boolean attackingFriendly(int curX, int curY, int newX, int newY, char[][] board) {
@@ -46,8 +46,22 @@ abstract public class Piece {
         return Character.isLowerCase(board[newX][newY]) == Character.isLowerCase(board[curX][curY]);
     }
 
+    protected static boolean cannotAttack(int x, int y, char[][] board, boolean isWhite){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                char currNot = board[i][j];
+                if(!Character.isLowerCase(currNot) == isWhite){
+                    if(canMove(currNot, i, j, x, y, board)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     //Expects that the piece is moving in that specific direction for these methods
-    protected static boolean goingThroughAPieceDiagonally(int curX, int curY, int newX, int newY, char[][] board) {
+    protected static boolean notGoingThroughAPieceDiagonally(int curX, int curY, int newX, int newY, char[][] board) {
         int dx = newX - curX;
         int dy = newY - curY;
 
@@ -59,13 +73,13 @@ abstract public class Piece {
 
         while (currentXTest != newX){
             if(board[currentXTest][currentYTest] != '-'){
-                return true;
+                return false;
             }
             currentXTest += stepDirX;
             currentYTest += stepDirY;
         }
 
-        return false;
+        return true;
     }
     protected static boolean goingThroughAPieceHorizontally(int curX, int curY, int newX, char[][] board) {
         int stepDirectionX = (newX - curX) / Math.abs(newX - curX);
@@ -79,17 +93,17 @@ abstract public class Piece {
         }
         return false;
     }
-    protected static boolean goingThroughAPieceVertically(int curX, int curY, int newY, char[][] board) {
+    protected static boolean notGoingThroughAPieceVertically(int curX, int curY, int newY, char[][] board) {
         int stepDirectionY = (newY - curY) / Math.abs(newY - curY);
 
         int currentYTest = curY + stepDirectionY;
         while (currentYTest != newY){
             if(board[curX][currentYTest] != '-'){
-                return true;
+                return false;
             }
             currentYTest += stepDirectionY;
         }
-        return false;
+        return true;
     }
 
 
