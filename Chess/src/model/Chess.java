@@ -23,7 +23,11 @@ public class Chess {
         miniMaxAI = new MiniMaxAI(false, 5);
     }
 
-    //TODO: Make it more readable and more "logic"
+    /**
+     * When this method is called, change the active piece notation
+     * @param mouseX xPos on mouse
+     * @param mouseY yPos on mouse
+     */
     public void mouseClickHandler(double mouseX, double mouseY){
 
         if(miniMaxAI.isWhite() == whitesTurn){
@@ -37,16 +41,15 @@ public class Chess {
             int nextXPos = Board.convertRealX(mouseX);
             int nextYPos = Board.convertRealY(mouseY);
             if(Piece.canMove(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos, board.getBoard())){
+                Board.clearEnPassantNot(board.getBoard());
                 board.getBoard()[nextXPos][nextYPos] = activePieceNotation;
-                if(Board.didCastleShort(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos)){
-                    board.getBoard()[5][activePieceY] = whitesTurn ? 'H' : 'h';
-                    board.getBoard()[7][activePieceY] = '-';
-                }else if(Board.didCastleLong(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos)){
-                    board.getBoard()[3][activePieceY] = whitesTurn ? 'H' : 'h';
-                    board.getBoard()[0][activePieceY] = '-';
-                }
+
+                changeIfCastle(nextXPos, nextYPos);
+                changeIfTwoStepsPawn(nextYPos);
+
                 whitesTurn = !whitesTurn;
-                if(!whitesTurn){
+
+                if(whitesTurn == miniMaxAI.isWhite()){
                     miniMaxAI.activeBoard = board;
                     miniMaxAI.calculateWithThread();
                 }
@@ -66,6 +69,25 @@ public class Chess {
         }
     }
 
+    private void changeIfCastle(int nextXPos, int nextYPos){
+        if(Board.didCastleShort(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos)){
+            board.getBoard()[5][activePieceY] = whitesTurn ? 'H' : 'h';
+            board.getBoard()[7][activePieceY] = '-';
+        }else if(Board.didCastleLong(activePieceNotation, activePieceX, activePieceY, nextXPos, nextYPos)){
+            board.getBoard()[3][activePieceY] = whitesTurn ? 'H' : 'h';
+            board.getBoard()[0][activePieceY] = '-';
+        }
+    }
+
+    private void changeIfTwoStepsPawn(int nextYPos){
+
+        if(Character.toLowerCase(activePieceNotation) == 'p'){
+            if(Math.abs(nextYPos - activePieceY) == 2){
+                board.getBoard()[activePieceX][nextYPos + (activePieceY - nextYPos) / 2] = 'E';
+            }
+        }
+
+    }
 
     public char getActivePieceNotation() {
         return activePieceNotation;

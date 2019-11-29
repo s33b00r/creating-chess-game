@@ -88,7 +88,7 @@ public class ChessGUI extends Application {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 char notation = chess.board.getBoard()[x][y];
-                if(notation != '-'){
+                if(notation != '-' && notation != 'E'){
                     Piece p = Board.getPieceType(notation);
                     double realX = WINDOW_WIDTH * (x / 8.0);
                     double realY = WINDOW_HEIGHT * ((7 - y) / 8.0);
@@ -96,7 +96,7 @@ public class ChessGUI extends Application {
                 }
             }
         }
-        if(chess.getActivePieceNotation() != '-'){
+        if(chess.getActivePieceNotation() != '-' && chess.getActivePieceNotation() != 'E'){
             Piece p = Board.getPieceType(chess.getActivePieceNotation());
             double xPos = mouseX - WINDOW_WIDTH / 16.0;
             double yPos = mouseY - WINDOW_HEIGHT / 16.0;

@@ -11,9 +11,9 @@ public abstract class Assets {
     private final String PIECE_TEXTURES = "file:Chess/assets/chessPieceImages/";
     private Map<String, Image> pieceTextures = new HashMap<>();
 
-    public GridPane background;
+    protected GridPane background;
 
-    public void bind(String objectName, boolean isWhite, String objectImage){
+    protected void bind(String objectName, boolean isWhite, String objectImage){
         Image i = getImage(objectImage);
         pieceTextures.put(objectName + isWhite, i);
     }
