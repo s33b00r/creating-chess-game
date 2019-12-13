@@ -100,6 +100,10 @@ public class Board {
         return board;
     }
 
+    /*public static void move(char[][] board, ){
+
+    }*/
+
     public static boolean didCastleShort(char not, int beX, int beY, int curX, int curY){
         return Character.toLowerCase(not) == 'k' && curX - beX == 2 && beY == curY;
     }
@@ -107,7 +111,7 @@ public class Board {
         return Character.toLowerCase(not) == 'k' && beX - curX == 2 && beY == curY;
     }
 
-    public void clearEnPassantNot(char[][] board){
+    public static void clearEnPassantNot(char[][] board){
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if(board[i][j] == 'E') {
