@@ -1,10 +1,9 @@
-package model;
+package AI;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-public class WeightData implements Serializable {
+class WeightData implements Serializable {
 
     public static final String FILENAME = "data";
 

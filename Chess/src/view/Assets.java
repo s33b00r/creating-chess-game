@@ -6,7 +6,7 @@ import javafx.scene.layout.GridPane;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Assets {
+abstract class Assets {
 
     private final String PIECE_TEXTURES = "file:Chess/assets/chessPieceImages/";
     private Map<String, Image> pieceTextures = new HashMap<>();

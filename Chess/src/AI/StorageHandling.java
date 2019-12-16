@@ -1,9 +1,8 @@
-package model;
+package AI;
 
 import java.io.*;
-import java.util.ArrayList;
 
-public class StorageHandling {
+class StorageHandling {
 
     public static void saveData(Serializable data, String fileName){
         FileOutputStream file;

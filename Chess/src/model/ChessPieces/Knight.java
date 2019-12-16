@@ -1,22 +1,9 @@
 package model.ChessPieces;
 
-import model.Piece;
+class Knight extends Piece {
 
-public class Knight extends Piece {
-
-    public Knight(boolean isWhite){
-        super(isWhite);
+    public Knight(int xPos, int yPos, boolean isWhite){
+        super(xPos, yPos, isWhite);
     }
 
-    public static boolean canMove(int curX, int curY, int xPos, int yPos, char[][] board) {
-        if(isNotOnBoard(xPos, yPos)){
-            return false;
-        }
-        if(attackingFriendly(curX, curY, xPos, yPos, board)){
-            return false;
-        }
-        int dx = Math.abs(curX - xPos);
-        int dy = Math.abs(curY - yPos);
-        return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
-    }
 }
