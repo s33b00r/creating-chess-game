@@ -1,4 +1,4 @@
-package model.ChessPieces;
+package model.chesspieces;
 
 class Queen extends Piece {
 
