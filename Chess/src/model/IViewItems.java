@@ -8,7 +8,6 @@ import java.util.Map;
 
 public interface IViewItems {
     Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths);
-    List<Object> getObjects();
-    List<Point> getPos();
-    List<Boolean> getIsWhite();
+    List<PieceObjectData> getAllPiecesData();
+    PieceObjectData getActivePieceData();
 }

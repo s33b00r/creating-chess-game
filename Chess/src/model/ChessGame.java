@@ -3,6 +3,8 @@ package model;
 
 import model.invertedboardstate.InvertedBoard;
 import model.invertedboardstate.InvertedBoardState;
+import model.invertedboardstate.NormalBoard;
+import observerinterfaces.IMousePositionListener;
 import observerinterfaces.IRedrawable;
 import pathhandling.PiecePathsHandler;
 
@@ -16,9 +18,12 @@ class ChessGame implements IChessGame, IViewItems {
     private Board board;
     private List<IRedrawable> redrawableList = new ArrayList<>();
 
-    private InvertedBoardState state = new InvertedBoard();
+    private boolean whitesTurn = true;
 
-    ChessGame(){
+    private InvertedBoardState state = new InvertedBoard();
+    private boolean lastUpdate = false;
+
+    ChessGame(IMousePositionListener mousePositionListener){
         board = new Board();
         board.setup();
 
@@ -31,59 +36,48 @@ class ChessGame implements IChessGame, IViewItems {
     }
 
     @Override
-    public void mouseMoved(int xPos, int yPos) {
-        if(board.hasActivePiece()){
-            for (IRedrawable redrawable : redrawableList){
-                redrawable.redrawWithActivePiece(board.activePieceGetIsWhite(), new Point(xPos, yPos),
-                        board.getActivePieceAsObject());
-            }
-        }
-    }
-
-    @Override
     public Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths) {
         return board.createMap(paths);
     }
 
     @Override
-    public List<Object> getObjects() {
-        return board.getPiecesAsObj();
+    public List<PieceObjectData> getAllPiecesData() {
+        List<PieceObjectData> returnList = new ArrayList<>();
+        for(PieceObjectData data : board.getAllPiecesData()){
+            returnList.add(new PieceObjectData(data.piece, state.getPos(data.pos), data.isWhite));
+        }
+        return returnList;
     }
 
     @Override
-    public List<Point> getPos() {
-        return state.getPos(board.getPos());
-    }
-
-    @Override
-    public List<Boolean> getIsWhite() {
-        return board.getIsWhiteList();
+    public PieceObjectData getActivePieceData() {
+        return board.getActivePieceData();
     }
 
     @Override
     public void mouseClick(int xPos, int yPos) {
 
-        Point rightPos = state.getMouseBoardPos(new Point(xPos, yPos));
+        Point rightPos = state.getPos(new Point(xPos, yPos));
 
         if(board.hasActivePiece()){
             board.placeActivePiece(rightPos);
+            whitesTurn = !whitesTurn;
         }else{
-            board.setActivePiece(rightPos);
+            if(board.correctColorPiece(rightPos, whitesTurn)){
+                board.setActivePiece(rightPos);
+            }
         }
     }
 
     //Starts a new main loop thread separated from the Application
     private void start(){
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    try {
-                        update();
-                        Thread.sleep(1000 / 30);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        Runnable runnable = () -> {
+            while (true){
+                try {
+                    update();
+                    Thread.sleep(1000 / 60);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -93,14 +87,16 @@ class ChessGame implements IChessGame, IViewItems {
     }
 
     private void update(){
-        if(board.hasActivePiece()){
-
+        if(board.hasActivePiece() || !lastUpdate){
+            for (IRedrawable iRedrawable : redrawableList) {
+                iRedrawable.repaint();
+            }
+            lastUpdate = !board.hasActivePiece();
         }
     }
 
-
     public void invertBoard() {
-        state.invertState();
+        state = state.invertState();
     }
 
 

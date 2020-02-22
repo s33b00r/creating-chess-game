@@ -2,19 +2,22 @@ package controller;
 
 
 import model.IChessGame;
+import observerinterfaces.IMousePositionListener;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class ChessMouseController implements MouseListener, MouseMotionListener {
+public class ChessMouseController implements MouseListener {
 
-    IChessGame chessGame;
+    private IChessGame chessGame;
 
     private int squareWidth;
     private int squareHeight;
     private int marginLeft;
     private int marginUp;
+
 
     public ChessMouseController(IChessGame chessGame, int xStart, int yStart, int xEnd, int yEnd){
         this.chessGame = chessGame;
@@ -24,11 +27,12 @@ public class ChessMouseController implements MouseListener, MouseMotionListener 
         marginUp = yStart;
     }
 
-
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = (e.getX() - marginLeft) / squareWidth;
-        int y = (e.getY() - marginUp) / squareHeight;
+        int x = (e.getX() - marginLeft);
+        x /= squareWidth;
+        int y = (e.getY() - marginUp);
+        y /= squareHeight;
         chessGame.mouseClick(x, y);
     }
 
@@ -50,15 +54,5 @@ public class ChessMouseController implements MouseListener, MouseMotionListener 
     @Override
     public void mouseExited(MouseEvent e) {
 
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        chessGame.mouseMoved(e.getX(), e.getY());
     }
 }

@@ -15,7 +15,7 @@ public class NormalBoard implements InvertedBoardState{
     }
 
     @Override
-    public Point getMouseBoardPos(Point point) {
+    public Point getPos(Point point) {
         return new Point(point.x, point.y);
     }
 

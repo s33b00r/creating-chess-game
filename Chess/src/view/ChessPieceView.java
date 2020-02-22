@@ -1,6 +1,8 @@
 package view;
 
 import model.IViewItems;
+import model.PieceObjectData;
+import observerinterfaces.IMousePositionListener;
 import observerinterfaces.IRedrawable;
 import view.paths.StandardPiecePaths;
 
@@ -10,67 +12,86 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ChessPieceView extends JPanel implements IRedrawable {
 
-    IViewItems itemHandler;
+    private IViewItems itemHandler;
     private Map<Boolean, Map<Object, String>> pathMap;
+    private Map<Boolean, Map<Object, BufferedImage>> imageMap = new HashMap<>();
     private int boardWidth;
     private int boardHeight;
+    private  IMousePositionListener mouseHandler;
 
-    public ChessPieceView(IViewItems itemHandler, int windowXPos, int windowYPos, int boardWidth, int boardHeight){
+    public ChessPieceView(IViewItems itemHandler, IMousePositionListener mouseHandler, int windowXPos, int windowYPos, int boardWidth, int boardHeight){
         this.itemHandler = itemHandler;
-        pathMap = itemHandler.createMap(new StandardPiecePaths());
+        this.pathMap = itemHandler.createMap(new StandardPiecePaths());
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
         this.setBounds(windowXPos, windowYPos, boardWidth, boardHeight);
+        this.mouseHandler = mouseHandler;
     }
-
-
 
     @Override
     public void paintComponent(Graphics g) {
-        List<Object> currObj = itemHandler.getObjects();
-        List<Point> currPos = itemHandler.getPos();
-        List<Boolean> isWhite = itemHandler.getIsWhite();
+        super.paintComponent(g);
+
+        List<PieceObjectData> allPiecesData = itemHandler.getAllPiecesData();
+        PieceObjectData activePiece = itemHandler.getActivePieceData();
+
         int pWidth = boardWidth / 8;
         int pHeight = boardHeight / 8;
 
-        for(int i = 0; i < currObj.size(); i++){
-            Map<Object, String> currSet = pathMap.get(isWhite.get(i));
-            String path = currSet.get(currObj.get(i).getClass());
-
-            BufferedImage image = null;
-            try {
-                image = ImageIO.read(new File(path));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            g.drawImage(image, currPos.get(i).x * pWidth, currPos.get(i).y * pHeight, pWidth, pHeight, this);
+        if(imageMap.isEmpty()){
+            setupImageMap();
         }
 
-        super.paintComponent(g);
+        for(PieceObjectData data : allPiecesData){
+            if(activePiece != null && data.piece.equals(activePiece.piece))
+                continue; //Skips drawing out the active piece until later
+            Map<Object, BufferedImage> colorMap = imageMap.get(data.isWhite); //Get the right color of the piece
+            BufferedImage image = colorMap.get(data.piece.getClass()); //Gets the right image for the piece
+            g.drawImage(image, pWidth * data.pos.x, pHeight * data.pos.y, pWidth, pHeight, null);
+        }
+
+        //Draws out the active piece if there is one
+        if(activePiece != null){
+            Map<Object, BufferedImage> temp = imageMap.get(activePiece.isWhite);
+            BufferedImage img = temp.get(activePiece.piece.getClass());
+            g.drawImage(img, mouseHandler.getLocalMousePosition().x - pWidth / 2,
+                    mouseHandler.getLocalMousePosition().y - pHeight,
+                    pWidth, pHeight, null);
+        }
+
     }
 
-    @Override
-    public void redrawWithActivePiece(boolean isWhite, Point pos, Object piece) {
-        //TODO: Make so that the image works as expected (Not a trail or that the image disappear)
-        Graphics g = getGraphics();
-        paintComponent(g);
+    private void setupImageMap(){
+        Map<Object, BufferedImage> whiteImgMap = new HashMap<>();
+        Map<Object, BufferedImage> blackImgMap = new HashMap<>();
 
-        Map<Object, String> currSet = pathMap.get(isWhite);
-        String path = currSet.get(piece.getClass());
+        imageMap.put(true, whiteImgMap);
+        setupOneColorMaps(whiteImgMap, true);
+        imageMap.put(false, blackImgMap);
+        setupOneColorMaps(blackImgMap, false);
+    }
 
-        BufferedImage image = null;
+    private void setupOneColorMaps(Map<Object, BufferedImage> oneColorMap, boolean isWhite){
+        Map<Object, String> currPathMap = pathMap.get(isWhite);
+        currPathMap.forEach((k,v)->{
+            BufferedImage img = getImageFromPath(v);
+            oneColorMap.put(k, img);
+        });
+    }
+
+    private BufferedImage getImageFromPath(String path){
         try{
-            image = ImageIO.read(new File(path));
+            return ImageIO.read(new File(path));
         }catch (IOException e){
             e.printStackTrace();
         }
-        System.out.println(pos);
-        g.drawImage(image, pos.x, pos.y, boardWidth / 7, boardHeight / 7, this);
+        return null;
     }
+
 }

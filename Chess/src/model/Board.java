@@ -29,32 +29,6 @@ class Board {
         allAlivePieces = PieceOrganizer.standardSetup();
     }
 
-   /* public static char[][] boardByColor(){
-        char[][] board = new char[8][8];
-
-
-    }*/
-
-   List<Point> getPos(){
-       List<Point> returnList = new ArrayList<>();
-       for (Piece p : allAlivePieces){
-           returnList.add(p.getPos());
-       }
-       return returnList;
-   }
-
-   List<Object> getPiecesAsObj(){
-       return new ArrayList<>(allAlivePieces);
-   }
-
-   List<Boolean> getIsWhiteList(){
-       List<Boolean> returnList = new ArrayList<>();
-       for(Piece p : allAlivePieces){
-           returnList.add(p.isWhite());
-       }
-       return returnList;
-   }
-
    Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths){
       return PieceOrganizer.createMap(paths);
    }
@@ -71,21 +45,34 @@ class Board {
    }
 
    void setActivePiece(Point p){
+        activePiece = getPieceAt(p);
+   }
+
+   boolean correctColorPiece(Point p, boolean isWhite){
+       return getPieceAt(p) != null && getPieceAt(p).isWhite() == isWhite;
+   }
+
+   List<PieceObjectData> getAllPiecesData(){
+        List<PieceObjectData> returnList = new ArrayList<>();
+        for(Piece p : allAlivePieces){
+            returnList.add(new PieceObjectData(p, p.getPos(), p.isWhite()));
+        }
+        return returnList;
+   }
+
+   PieceObjectData getActivePieceData(){
+        if(hasActivePiece()){
+            return new PieceObjectData(activePiece, activePiece.getPos(), activePiece.isWhite());
+        }
+        return null;
+   }
+
+   private Piece getPieceAt(Point p){
        for (Piece piece : allAlivePieces){
            if(piece.getPos().equals(p)){
-               activePiece = piece;
-               System.out.println("Got one");
-               break;
+               return piece;
            }
        }
+       return null;
    }
-
-   boolean activePieceGetIsWhite(){
-       return activePiece.isWhite();
-   }
-
-   Object getActivePieceAsObject(){
-       return activePiece;
-   }
-
 }

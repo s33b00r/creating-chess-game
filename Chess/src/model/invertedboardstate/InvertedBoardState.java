@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface InvertedBoardState {
     List<Point> getPos(List<Point> points);
-    Point getMouseBoardPos(Point point);
+    Point getPos(Point point);
     InvertedBoardState invertState();
 }
