@@ -1,6 +1,8 @@
 package model;
 
-import model.chesspieces.*;
+import model.chesspieces.IPieceAt;
+import model.chesspieces.Piece;
+import model.chesspieces.PieceOrganizer;
 import pathhandling.PiecePathsHandler;
 
 import java.awt.*;
@@ -18,7 +20,7 @@ import java.util.Map;
  * Nothing = '-' or 'E' if can do En passant to that square
  */
 
-class Board {
+class Board implements IPieceAt {
 
     private List<Piece> allAlivePieces;
 
@@ -26,7 +28,7 @@ class Board {
     private Point lastPos = null;
 
     void setup(){
-        allAlivePieces = PieceOrganizer.standardSetup();
+        allAlivePieces = PieceOrganizer.standardSetup(this);
     }
 
    Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths){
@@ -38,9 +40,7 @@ class Board {
    }
 
    void placeActivePiece(Point p){
-       if(activePiece.canMove(p)){
-          activePiece.move(p);
-       }
+       activePiece.move(p);
        activePiece = null;
    }
 
@@ -75,4 +75,30 @@ class Board {
        }
        return null;
    }
+
+    void removeActivePiece() {
+        activePiece = null;
+    }
+
+    void removePieceAt(Point p) {
+        allAlivePieces.remove(getPieceAt(p));
+    }
+
+    boolean canMoveActivePiece(Point p) {
+        if (hasActivePiece()) {
+            return activePiece.canMove(p);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean pieceAt(Point pos) {
+        return getPieceAt(pos) != null;
+    }
+
+    @Override
+    public boolean isWhiteAt(Point pos) {
+        Piece cur = getPieceAt(pos);
+        return getPieceAt(pos).isWhite();
+    }
 }

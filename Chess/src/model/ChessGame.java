@@ -3,7 +3,6 @@ package model;
 
 import model.invertedboardstate.InvertedBoard;
 import model.invertedboardstate.InvertedBoardState;
-import model.invertedboardstate.NormalBoard;
 import observerinterfaces.IMousePositionListener;
 import observerinterfaces.IRedrawable;
 import pathhandling.PiecePathsHandler;
@@ -60,8 +59,13 @@ class ChessGame implements IChessGame, IViewItems {
         Point rightPos = state.getPos(new Point(xPos, yPos));
 
         if(board.hasActivePiece()){
-            board.placeActivePiece(rightPos);
-            whitesTurn = !whitesTurn;
+            if (board.canMoveActivePiece(rightPos)) {
+                board.removePieceAt(rightPos);
+                board.placeActivePiece(rightPos);
+                whitesTurn = !whitesTurn;
+            } else {
+                board.removeActivePiece();
+            }
         }else{
             if(board.correctColorPiece(rightPos, whitesTurn)){
                 board.setActivePiece(rightPos);

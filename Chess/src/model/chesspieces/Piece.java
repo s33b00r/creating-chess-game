@@ -1,17 +1,20 @@
 package model.chesspieces;
 
+
 import java.awt.*;
 
 public abstract class Piece {
 
-    private final boolean isWhite;
+    protected final boolean isWhite;
     private int xPos;
     private int yPos;
+    protected IPieceAt pieceMap;
 
-    public Piece(int xPos, int yPos, boolean isWhite){
+    public Piece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
         this.isWhite = isWhite;
         this.xPos = xPos;
         this.yPos = yPos;
+        this.pieceMap = pieceMap;
     }
 
     public Point getPos(){
@@ -23,9 +26,7 @@ public abstract class Piece {
     }
 
     //TODO make abstract and implement in other subclasses
-    public boolean canMove(Point p){
-        return true;
-    }
+    public abstract boolean canMove(Point p);
 
     public void move(Point p){
         xPos = p.x;

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class PieceOrganizer {
 
-    public static List<Piece> standardSetup(){
+    public static List<Piece> standardSetup(IPieceAt pieceMap) {
         List<Piece> returnList = new ArrayList<>();
 
 
@@ -21,7 +21,7 @@ public class PieceOrganizer {
             isWhite = !isWhite;
             yPos += 5;
             for (int i = 0; i < 8; i++) {
-                returnList.add(new Pawn(i, yPos, isWhite));
+                returnList.add(new Pawn(i, yPos, isWhite, pieceMap));
             }
         }
 
@@ -33,9 +33,9 @@ public class PieceOrganizer {
             isWhite = !isWhite;
             yPos += 7;
             for (int j = 0; j < 2; j++) {
-                returnList.add(new Rook(xPos * j, yPos, isWhite));
-                returnList.add(new Knight(Math.abs(xPos * j - 1), yPos, isWhite));
-                returnList.add(new Bishop(Math.abs(xPos * j - 2), yPos, isWhite));
+                returnList.add(new Rook(xPos * j, yPos, isWhite, pieceMap));
+                returnList.add(new Knight(Math.abs(xPos * j - 1), yPos, isWhite, pieceMap));
+                returnList.add(new Bishop(Math.abs(xPos * j - 2), yPos, isWhite, pieceMap));
             }
         }
 
@@ -46,8 +46,8 @@ public class PieceOrganizer {
             yPos += 7;
             isWhite = !isWhite;
 
-            returnList.add(new Queen(3, yPos, isWhite));
-            returnList.add(new King(4, yPos, isWhite));
+            returnList.add(new Queen(3, yPos, isWhite, pieceMap));
+            returnList.add(new King(4, yPos, isWhite, pieceMap));
         }
 
         return returnList;
