@@ -9,10 +9,10 @@ public abstract class Piece {
     private int xPos;
     private int yPos;
     protected IPieceAt pieceMap;
-    protected char notation;
+    char notation;
     private boolean hasMoved = false;
 
-    public Piece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, char notation) {
+    Piece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, char notation) {
         this.isWhite = isWhite;
         this.xPos = xPos;
         this.yPos = yPos;
@@ -28,7 +28,6 @@ public abstract class Piece {
         return isWhite;
     }
 
-    //TODO make abstract and implement in other subclasses
     public abstract boolean canMove(Point p);
 
     public char getNotation() {

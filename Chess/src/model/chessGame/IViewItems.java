@@ -1,4 +1,4 @@
-package model.ChessGame;
+package model.chessGame;
 
 import pathhandling.PiecePathsHandler;
 

@@ -1,8 +1,9 @@
-package model.ChessGame;
+package model.chessGame;
 
 import model.chesspieces.IPieceAt;
 import model.chesspieces.Piece;
 import model.chesspieces.PieceOrganizer;
+import org.jetbrains.annotations.Nullable;
 import pathhandling.PiecePathsHandler;
 
 import java.awt.*;
@@ -26,6 +27,7 @@ class Board implements IPieceAt {
 
     private Piece activePiece = null;
     private Point lastPos = null;
+    private Piece lastPiece = null;
 
     void setup(){
         allAlivePieces = PieceOrganizer.standardSetup(this);
@@ -44,9 +46,24 @@ class Board implements IPieceAt {
            if (p.x == 6 || p.x == 2)
                moveRookInCastling(p);
        }
+       if (Character.toLowerCase(activePiece.getNotation()) == 'p') {
+           if (p.y == 5 || p.y == 2)
+               removeEnPassantPawn(p);
+       }
+       lastPos = activePiece.getPos();
+       lastPiece = activePiece;
        activePiece.move(p);
        activePiece = null;
    }
+
+    private void removeEnPassantPawn(Point p) {
+        Piece pieceToRemove = getPieceAt(p);
+        if (pieceToRemove == null) {
+            int y = p.y == 5 ? 4 : 3;
+            pieceToRemove = getPieceAt(new Point(p.x, y));
+            allAlivePieces.remove(pieceToRemove);
+        }
+    }
 
     private void moveRookInCastling(Point p) {
         if (p.x == 6) {
@@ -85,14 +102,15 @@ class Board implements IPieceAt {
         return null;
    }
 
-   private Piece getPieceAt(Point p){
-       for (Piece piece : allAlivePieces){
-           if(piece.getPos().equals(p)){
-               return piece;
-           }
-       }
-       return null;
-   }
+    @Nullable
+    private Piece getPieceAt(Point p){
+        for (Piece piece : allAlivePieces){
+            if(piece.getPos().equals(p)){
+                return piece;
+            }
+        }
+        return null;
+    }
 
     void removeActivePiece() {
         activePiece = null;
@@ -125,7 +143,7 @@ class Board implements IPieceAt {
         char notation = isWhite ? 'R' : 'r';
         for (Piece p : allAlivePieces) {
             if (p.getNotation() == notation) {
-                if (p.getPos().x == 7 && !p.hasMoved())
+                if (p.getPos().x == 7 && p.hasMoved())
                     return false;
             }
         }
@@ -137,7 +155,7 @@ class Board implements IPieceAt {
         char notation = isWhite ? 'R' : 'r';
         for (Piece p : allAlivePieces) {
             if (p.getNotation() == notation) {
-                if (p.getPos().x == 0 && !p.hasMoved())
+                if (p.getPos().x == 0 && p.hasMoved())
                     return false;
             }
         }
@@ -150,6 +168,18 @@ class Board implements IPieceAt {
             if (piece.isWhite() == isWhite) {
                 if (piece.canMove(p))
                     return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canEnPassant(Point p) {
+        if (Character.toLowerCase(lastPiece.getNotation()) == 'p') {
+            if (p.y == 5) {
+                return lastPos.y == 6 && lastPiece.getPos().y == 4;
+            } else if (p.y == 2) {
+                return lastPos.y == 1 && lastPiece.getPos().y == 3;
             }
         }
         return false;

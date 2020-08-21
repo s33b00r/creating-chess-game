@@ -11,4 +11,6 @@ public interface IPieceAt {
     boolean rightRookHasMoved(boolean isWhite);
 
     boolean canMoveTo(Point p, boolean isWhite);
+
+    boolean canEnPassant(Point p);
 }

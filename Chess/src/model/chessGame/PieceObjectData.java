@@ -1,4 +1,4 @@
-package model.ChessGame;
+package model.chessGame;
 
 import java.awt.*;
 
@@ -10,7 +10,7 @@ public class PieceObjectData {
     public PieceObjectData(){
     }
 
-    public PieceObjectData(Object piece, Point pos, boolean isWhite){
+    PieceObjectData(Object piece, Point pos, boolean isWhite) {
         this.piece = piece;
         this.pos = new Point(pos);
         this.isWhite = isWhite;

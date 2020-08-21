@@ -4,13 +4,12 @@ import java.awt.*;
 
 class King extends Piece {
 
-    public King(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
+    King(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
         super(xPos, yPos, isWhite, pieceMap, 'K');
     }
 
     @Override
     public boolean canMove(Point p) {
-        //TODO: Castling
         int dx = p.x - getPos().x;
         int dy = p.y - getPos().y;
 
@@ -28,7 +27,7 @@ class King extends Piece {
     }
 
     private boolean canCastle(int dx, Point p) {
-        if (!hasMoved() &&
+        if (hasMoved() &&
                 !pieceMap.canMoveTo(getPos(), !isWhite) &&
                 !pieceMap.canMoveTo(p, !isWhite)) {
 
