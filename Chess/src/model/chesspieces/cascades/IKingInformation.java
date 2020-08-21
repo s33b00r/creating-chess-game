@@ -1,16 +1,12 @@
-package model.chesspieces;
+package model.chesspieces.cascades;
 
 import java.awt.*;
 
-public interface IPieceAt {
-    boolean pieceAt(Point pos);
-    boolean isWhiteAt(Point pos);
+public interface IKingInformation extends IPieceAt {
 
     boolean leftRookHasMoved(boolean isWhite);
 
     boolean rightRookHasMoved(boolean isWhite);
 
     boolean canMoveTo(Point p, boolean isWhite);
-
-    boolean canEnPassant(Point p);
 }

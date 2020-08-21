@@ -1,8 +1,10 @@
 package model.chessGame;
 
-import model.chesspieces.IPieceAt;
 import model.chesspieces.Piece;
+import model.chesspieces.PieceData;
 import model.chesspieces.PieceOrganizer;
+import model.chesspieces.cascades.IKingInformation;
+import model.chesspieces.cascades.IPawnInformation;
 import org.jetbrains.annotations.Nullable;
 import pathhandling.PiecePathsHandler;
 
@@ -11,17 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * King = 'K' or 'M' if has moved
- * Queen = 'Q'
- * Rook = 'R' or 'H' if has moved
- * Bishop = 'B'
- * Knight = 'N'
- * Pawn = 'P'
- * Nothing = '-' or 'E' if can do En passant to that square
- */
 
-class Board implements IPieceAt {
+class Board implements IKingInformation, IPawnInformation {
 
     private List<Piece> allAlivePieces;
 
@@ -33,27 +26,26 @@ class Board implements IPieceAt {
         allAlivePieces = PieceOrganizer.standardSetup(this);
     }
 
-   Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths){
+    Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths) {
       return PieceOrganizer.createMap(paths);
    }
 
-   boolean hasActivePiece(){
+    boolean hasActivePiece() {
        return activePiece != null;
    }
 
-   void placeActivePiece(Point p){
-       if (Character.toLowerCase(activePiece.getNotation()) == 'k') {
+    void placeActivePiece(Point p) {
+        if (activePiece.getNotation() == PieceData.KING) {
            if (p.x == 6 || p.x == 2)
                moveRookInCastling(p);
        }
-       if (Character.toLowerCase(activePiece.getNotation()) == 'p') {
+        if (activePiece.getNotation() == PieceData.PAWN) {
            if (p.y == 5 || p.y == 2)
                removeEnPassantPawn(p);
        }
        lastPos = activePiece.getPos();
        lastPiece = activePiece;
        activePiece.move(p);
-       activePiece = null;
    }
 
     private void removeEnPassantPawn(Point p) {
@@ -83,11 +75,11 @@ class Board implements IPieceAt {
         activePiece = getPieceAt(p);
    }
 
-   boolean correctColorPiece(Point p, boolean isWhite){
+    boolean correctColorPiece(Point p, boolean isWhite) {
        return getPieceAt(p) != null && getPieceAt(p).isWhite() == isWhite;
    }
 
-   List<PieceObjectData> getAllPiecesData(){
+    List<PieceObjectData> getAllPiecesData() {
         List<PieceObjectData> returnList = new ArrayList<>();
         for(Piece p : allAlivePieces){
             returnList.add(new PieceObjectData(p, p.getPos(), p.isWhite()));
@@ -95,7 +87,7 @@ class Board implements IPieceAt {
         return returnList;
    }
 
-   PieceObjectData getActivePieceData(){
+    PieceObjectData getActivePieceData() {
         if(hasActivePiece()){
             return new PieceObjectData(activePiece, activePiece.getPos(), activePiece.isWhite());
         }
@@ -122,7 +114,30 @@ class Board implements IPieceAt {
 
     boolean canMoveActivePiece(Point p) {
         if (hasActivePiece()) {
-            return activePiece.canMove(p);
+            if (activePiece.canMove(p)) {
+                return !isCheck(p);
+            }
+        }
+        return false;
+    }
+
+    private boolean isCheck(Point p) {
+        Piece tempPiece = getPieceAt(p);
+        Point tempPos = activePiece.getPos();
+        removePieceAt(p);
+        activePiece.move(p);
+        boolean isCheck = findIfPositionHasCheck(activePiece.isWhite());
+        activePiece.move(tempPos);
+        if (tempPiece != null)
+            allAlivePieces.add(tempPiece);
+        return isCheck;
+    }
+
+    private boolean findIfPositionHasCheck(boolean isWhite) {
+        for (Piece p : allAlivePieces) {
+            if ((p.getNotation() == PieceData.MOVED_KING || p.getNotation() == PieceData.KING) && p.isWhite() == isWhite) {
+                return canMoveTo(p.getPos(), !isWhite);
+            }
         }
         return false;
     }
@@ -138,28 +153,26 @@ class Board implements IPieceAt {
         return getPieceAt(pos).isWhite();
     }
 
+
+
+    @Override
+    public boolean leftRookHasMoved(boolean isWhite) {
+        return rookHasMoved(isWhite, 0);
+    }
+
     @Override
     public boolean rightRookHasMoved(boolean isWhite) {
-        char notation = isWhite ? 'R' : 'r';
+        return rookHasMoved(isWhite, 7);
+    }
+
+    private boolean rookHasMoved(boolean isWhite, int startXPos) {
         for (Piece p : allAlivePieces) {
-            if (p.getNotation() == notation) {
-                if (p.getPos().x == 7 && p.hasMoved())
+            if ((p.getNotation() == PieceData.ROOK || p.getNotation() == PieceData.MOVED_ROOK) && isWhite == p.isWhite()) {
+                if (p.getPos().x == startXPos && p.hasMoved())
                     return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public boolean leftRookHasMoved(boolean isWhite) {
-        char notation = isWhite ? 'R' : 'r';
-        for (Piece p : allAlivePieces) {
-            if (p.getNotation() == notation) {
-                if (p.getPos().x == 0 && p.hasMoved())
-                    return false;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -175,7 +188,7 @@ class Board implements IPieceAt {
 
     @Override
     public boolean canEnPassant(Point p) {
-        if (Character.toLowerCase(lastPiece.getNotation()) == 'p') {
+        if (lastPiece.getNotation() == PieceData.PAWN) {
             if (p.y == 5) {
                 return lastPos.y == 6 && lastPiece.getPos().y == 4;
             } else if (p.y == 2) {

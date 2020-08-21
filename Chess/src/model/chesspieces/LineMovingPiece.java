@@ -1,5 +1,8 @@
 package model.chesspieces;
 
+import model.chesspieces.cascades.IPieceAt;
+import model.chesspieces.movementrules.MoveInOneLine;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 public abstract class LineMovingPiece extends Piece {
     protected List<MoveInOneLine> movementList;
 
-    public LineMovingPiece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, char notation) {
+    public LineMovingPiece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, PieceData notation) {
         super(xPos, yPos, isWhite, pieceMap, notation);
         movementList = new ArrayList<>();
     }

@@ -1,11 +1,16 @@
-package model.chesspieces;
+package model.chesspieces.actualpieces;
+
+import model.chesspieces.Piece;
+import model.chesspieces.PieceData;
+import model.chesspieces.cascades.IKingInformation;
+import model.chesspieces.cascades.IPieceAt;
 
 import java.awt.*;
 
-class King extends Piece {
+public class King extends Piece {
 
-    King(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap, 'K');
+    public King(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
+        super(xPos, yPos, isWhite, pieceMap, PieceData.KING);
     }
 
     @Override
@@ -14,7 +19,6 @@ class King extends Piece {
         int dy = p.y - getPos().y;
 
         //Castling
-
         if (Math.abs(dx) == 2 && dy == 0) {
             return canCastle(dx, p);
         }
@@ -27,6 +31,7 @@ class King extends Piece {
     }
 
     private boolean canCastle(int dx, Point p) {
+        IKingInformation pieceMap = (IKingInformation) this.pieceMap;
         if (hasMoved() &&
                 !pieceMap.canMoveTo(getPos(), !isWhite) &&
                 !pieceMap.canMoveTo(p, !isWhite)) {
@@ -52,7 +57,7 @@ class King extends Piece {
 
     @Override
     public void move(Point p) {
-        notation = isWhite ? 'M' : 'm';
+        notation = PieceData.MOVED_KING;
         super.move(p);
     }
 }

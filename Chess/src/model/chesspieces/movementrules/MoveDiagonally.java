@@ -1,4 +1,6 @@
-package model.chesspieces;
+package model.chesspieces.movementrules;
+
+import model.chesspieces.cascades.IPieceAt;
 
 import java.awt.*;
 

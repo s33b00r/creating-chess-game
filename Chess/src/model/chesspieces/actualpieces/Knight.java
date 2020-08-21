@@ -1,11 +1,15 @@
-package model.chesspieces;
+package model.chesspieces.actualpieces;
+
+import model.chesspieces.Piece;
+import model.chesspieces.PieceData;
+import model.chesspieces.cascades.IPieceAt;
 
 import java.awt.*;
 
-class Knight extends Piece {
+public class Knight extends Piece {
 
     public Knight(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap, 'N');
+        super(xPos, yPos, isWhite, pieceMap, PieceData.KNIGHT);
     }
 
     @Override

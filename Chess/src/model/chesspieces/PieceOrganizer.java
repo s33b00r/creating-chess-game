@@ -1,5 +1,7 @@
 package model.chesspieces;
 
+import model.chesspieces.actualpieces.*;
+import model.chesspieces.cascades.IPieceAt;
 import pathhandling.PiecePathsHandler;
 
 import java.util.ArrayList;

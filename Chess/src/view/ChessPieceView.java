@@ -25,6 +25,9 @@ public class ChessPieceView extends JPanel implements IRedrawable {
     private int boardHeight;
     private  IMousePositionListener mouseHandler;
 
+    private PromotionView promotionView;
+    private boolean showPromotionScreen = false;
+
     public ChessPieceView(IViewItems itemHandler, IMousePositionListener mouseHandler, int windowXPos, int windowYPos, int boardWidth, int boardHeight){
         this.itemHandler = itemHandler;
         this.pathMap = itemHandler.createMap(new StandardPiecePaths());
@@ -32,6 +35,15 @@ public class ChessPieceView extends JPanel implements IRedrawable {
         this.boardHeight = boardHeight;
         this.setBounds(windowXPos, windowYPos, boardWidth, boardHeight);
         this.mouseHandler = mouseHandler;
+        promotionView = new PromotionView();
+        this.add(promotionView);
+        showPromotionScreen(true);
+    }
+
+    @Override
+    public void showPromotionScreen(boolean show) {
+        showPromotionScreen = show;
+        promotionView.setVisible(show);
     }
 
     @Override
@@ -63,6 +75,10 @@ public class ChessPieceView extends JPanel implements IRedrawable {
             g.drawImage(img, mouseHandler.getLocalMousePosition().x - pWidth / 2,
                     mouseHandler.getLocalMousePosition().y - pHeight,
                     pWidth, pHeight, null);
+        }
+
+        if (showPromotionScreen) {
+            promotionView.repaint();
         }
 
     }

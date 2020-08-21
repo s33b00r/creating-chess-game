@@ -63,9 +63,8 @@ class ChessGame implements IChessGame, IViewItems {
                 board.removePieceAt(rightPos);
                 board.placeActivePiece(rightPos);
                 whitesTurn = !whitesTurn;
-            } else {
-                board.removeActivePiece();
             }
+            board.removeActivePiece();
         }else{
             if(board.correctColorPiece(rightPos, whitesTurn)){
                 board.setActivePiece(rightPos);

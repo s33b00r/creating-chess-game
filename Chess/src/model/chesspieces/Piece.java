@@ -1,6 +1,8 @@
 package model.chesspieces;
 
 
+import model.chesspieces.cascades.IPieceAt;
+
 import java.awt.*;
 
 public abstract class Piece {
@@ -9,15 +11,15 @@ public abstract class Piece {
     private int xPos;
     private int yPos;
     protected IPieceAt pieceMap;
-    char notation;
     private boolean hasMoved = false;
+    protected PieceData notation;
 
-    Piece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, char notation) {
+    public Piece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, PieceData notation) {
         this.isWhite = isWhite;
         this.xPos = xPos;
         this.yPos = yPos;
         this.pieceMap = pieceMap;
-        this.notation = isWhite ? notation : Character.toLowerCase(notation);
+        this.notation = notation;
     }
 
     public Point getPos(){
@@ -30,7 +32,7 @@ public abstract class Piece {
 
     public abstract boolean canMove(Point p);
 
-    public char getNotation() {
+    public PieceData getNotation() {
         return notation;
     }
 

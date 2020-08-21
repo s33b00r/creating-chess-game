@@ -1,15 +1,21 @@
-package model.chesspieces;
+package model.chesspieces.actualpieces;
+
+import model.chesspieces.Piece;
+import model.chesspieces.PieceData;
+import model.chesspieces.cascades.IPawnInformation;
+import model.chesspieces.cascades.IPieceAt;
 
 import java.awt.*;
 
-class Pawn extends Piece {
+public class Pawn extends Piece {
 
-    Pawn(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap, 'P');
+    public Pawn(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
+        super(xPos, yPos, isWhite, pieceMap, PieceData.PAWN);
     }
 
     @Override
     public boolean canMove(Point p) {
+        IPawnInformation pieceMap = (IPawnInformation) this.pieceMap;
         int dy = p.y - getPos().y;
         int dx = p.x - getPos().x;
         int stepDirY = dy > 0 ? 1 : -1;
