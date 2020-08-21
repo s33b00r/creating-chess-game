@@ -7,8 +7,8 @@ import java.util.List;
 public abstract class LineMovingPiece extends Piece {
     protected List<MoveInOneLine> movementList;
 
-    public LineMovingPiece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap);
+    public LineMovingPiece(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap, char notation) {
+        super(xPos, yPos, isWhite, pieceMap, notation);
         movementList = new ArrayList<>();
     }
 

@@ -1,7 +1,7 @@
 package view;
 
-import model.IViewItems;
-import model.PieceObjectData;
+import model.ChessGame.IViewItems;
+import model.ChessGame.PieceObjectData;
 import observerinterfaces.IMousePositionListener;
 import observerinterfaces.IRedrawable;
 import view.paths.StandardPiecePaths;

@@ -1,4 +1,4 @@
-package model;
+package model.ChessGame;
 
 import model.chesspieces.IPieceAt;
 import model.chesspieces.Piece;
@@ -40,11 +40,29 @@ class Board implements IPieceAt {
    }
 
    void placeActivePiece(Point p){
+       if (Character.toLowerCase(activePiece.getNotation()) == 'k') {
+           if (p.x == 6 || p.x == 2)
+               moveRookInCastling(p);
+       }
        activePiece.move(p);
        activePiece = null;
    }
 
-   void setActivePiece(Point p){
+    private void moveRookInCastling(Point p) {
+        if (p.x == 6) {
+            Piece rook = getPieceAt(new Point(7, p.y));
+            if (rook != null) {
+                rook.move(new Point(5, p.y));
+            }
+        } else {
+            Piece rook = getPieceAt(new Point(0, p.y));
+            if (rook != null) {
+                rook.move(new Point(3, p.y));
+            }
+        }
+    }
+
+    void setActivePiece(Point p) {
         activePiece = getPieceAt(p);
    }
 
@@ -100,5 +118,40 @@ class Board implements IPieceAt {
     public boolean isWhiteAt(Point pos) {
         Piece cur = getPieceAt(pos);
         return getPieceAt(pos).isWhite();
+    }
+
+    @Override
+    public boolean rightRookHasMoved(boolean isWhite) {
+        char notation = isWhite ? 'R' : 'r';
+        for (Piece p : allAlivePieces) {
+            if (p.getNotation() == notation) {
+                if (p.getPos().x == 7 && !p.hasMoved())
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean leftRookHasMoved(boolean isWhite) {
+        char notation = isWhite ? 'R' : 'r';
+        for (Piece p : allAlivePieces) {
+            if (p.getNotation() == notation) {
+                if (p.getPos().x == 0 && !p.hasMoved())
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canMoveTo(Point p, boolean isWhite) {
+        for (Piece piece : allAlivePieces) {
+            if (piece.isWhite() == isWhite) {
+                if (piece.canMove(p))
+                    return true;
+            }
+        }
+        return false;
     }
 }

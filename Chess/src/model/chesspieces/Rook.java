@@ -2,12 +2,10 @@ package model.chesspieces;
 
 import java.awt.*;
 
-class Rook extends LineMovingPiece {
-
-    private boolean hasMoved = false;
+public class Rook extends LineMovingPiece {
 
     public Rook(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap);
+        super(xPos, yPos, isWhite, pieceMap, 'R');
         movementList.add(MoveVertically.getInstance());
         movementList.add(MoveHorizontally.getInstance());
     }
@@ -15,9 +13,7 @@ class Rook extends LineMovingPiece {
 
     @Override
     public void move(Point p) {
-        hasMoved = true;
+        notation = isWhite ? 'H' : 'h';
         super.move(p);
     }
-
-
 }

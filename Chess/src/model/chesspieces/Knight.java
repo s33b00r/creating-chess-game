@@ -5,7 +5,7 @@ import java.awt.*;
 class Knight extends Piece {
 
     public Knight(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap);
+        super(xPos, yPos, isWhite, pieceMap, 'N');
     }
 
     @Override

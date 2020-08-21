@@ -5,7 +5,7 @@ import java.awt.*;
 class Pawn extends Piece {
 
     public Pawn(int xPos, int yPos, boolean isWhite, IPieceAt pieceMap) {
-        super(xPos, yPos, isWhite, pieceMap);
+        super(xPos, yPos, isWhite, pieceMap, 'P');
     }
 
     @Override

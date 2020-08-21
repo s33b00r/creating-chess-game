@@ -1,4 +1,4 @@
-package model;
+package model.ChessGame;
 
 
 import model.invertedboardstate.InvertedBoard;

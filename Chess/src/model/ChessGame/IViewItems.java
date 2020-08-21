@@ -1,8 +1,7 @@
-package model;
+package model.ChessGame;
 
 import pathhandling.PiecePathsHandler;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 

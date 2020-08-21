@@ -1,7 +1,7 @@
 import backgrounds.StandardBackground;
 import controller.ChessMouseController;
-import model.ChessGameFactory;
-import model.IChessGame;
+import model.ChessGame.ChessGameFactory;
+import model.ChessGame.IChessGame;
 import observerinterfaces.IMousePositionListener;
 import view.ChessPieceView;
 
