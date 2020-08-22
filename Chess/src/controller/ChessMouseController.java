@@ -1,7 +1,7 @@
 package controller;
 
 
-import model.chessGame.IChessGame;
+import model.chessgame.IChessGame;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

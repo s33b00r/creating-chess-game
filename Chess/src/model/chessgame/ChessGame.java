@@ -1,4 +1,4 @@
-package model.chessGame;
+package model.chessgame;
 
 
 import model.invertedboardstate.InvertedBoard;
@@ -16,6 +16,7 @@ class ChessGame implements IChessGame, IViewItems {
 
     private Board board;
     private List<IRedrawable> redrawableList = new ArrayList<>();
+    private boolean hasCheckForEndOfGame = true;
 
     private boolean whitesTurn = true;
 
@@ -58,16 +59,23 @@ class ChessGame implements IChessGame, IViewItems {
 
         Point rightPos = state.getPos(new Point(xPos, yPos));
 
-        if(board.hasActivePiece()){
-            if (board.canMoveActivePiece(rightPos)) {
-                board.removePieceAt(rightPos);
-                board.placeActivePiece(rightPos);
+        Runnable runnable = () -> onMouseClick(rightPos);
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
+    private void onMouseClick(Point boardPos) {
+        if (board.hasActivePiece()) {
+            if (board.canMoveActivePiece(boardPos)) {
+                board.removePieceAt(boardPos);
+                board.placeActivePiece(boardPos);
                 whitesTurn = !whitesTurn;
+                hasCheckForEndOfGame = false;
             }
             board.removeActivePiece();
-        }else{
-            if(board.correctColorPiece(rightPos, whitesTurn)){
-                board.setActivePiece(rightPos);
+        } else {
+            if (board.correctColorPiece(boardPos, whitesTurn)) {
+                board.setActivePiece(boardPos);
             }
         }
     }
@@ -95,6 +103,14 @@ class ChessGame implements IChessGame, IViewItems {
                 iRedrawable.repaint();
             }
             lastUpdate = !board.hasActivePiece();
+        }
+        if (!hasCheckForEndOfGame) {
+            board.checkForEndOfGame(whitesTurn);
+            if (board.getStatus() != GameStatus.RUNNING) {
+                System.out.println("Game has ended!");
+                System.out.println(board.getStatus());
+            }
+            hasCheckForEndOfGame = true;
         }
     }
 

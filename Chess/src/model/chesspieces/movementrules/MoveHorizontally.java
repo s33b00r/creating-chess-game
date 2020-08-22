@@ -16,7 +16,7 @@ public class MoveHorizontally implements MoveInOneLine {
 
     @Override
     public boolean canMove(IPieceAt pieceMap, boolean isWhite, Point currentPos, Point wantedPos) {
-        if (currentPos.y != wantedPos.y)
+        if (currentPos.y != wantedPos.y || currentPos.x == wantedPos.x)
             return false;
         int dx = wantedPos.x - currentPos.x;
         int stepDirX = dx > 0 ? 1 : -1;
@@ -27,6 +27,9 @@ public class MoveHorizontally implements MoveInOneLine {
         while (curX != wantedPos.x) {
             if (pieceMap.pieceAt(new Point(curX, curY)))
                 return false;
+            curX += stepDirX;
+            if (Math.abs(curX) > 100)
+                System.out.println("HORIZONTAL");
         }
         return !pieceMap.pieceAt(wantedPos) || pieceMap.isWhiteAt(wantedPos) != isWhite;
     }

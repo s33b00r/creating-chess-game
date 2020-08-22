@@ -1,4 +1,4 @@
-package model.chessGame;
+package model.chessgame;
 
 import model.chesspieces.Piece;
 import model.chesspieces.PieceData;
@@ -18,35 +18,36 @@ class Board implements IKingInformation, IPawnInformation {
 
     private List<Piece> allAlivePieces;
 
+    private GameStatus status = GameStatus.RUNNING;
     private Piece activePiece = null;
     private Point lastPos = null;
     private Piece lastPiece = null;
 
-    void setup(){
+    void setup() {
         allAlivePieces = PieceOrganizer.standardSetup(this);
     }
 
     Map<Boolean, Map<Object, String>> createMap(PiecePathsHandler paths) {
-      return PieceOrganizer.createMap(paths);
-   }
+        return PieceOrganizer.createMap(paths);
+    }
 
     boolean hasActivePiece() {
-       return activePiece != null;
-   }
+        return activePiece != null;
+    }
 
     void placeActivePiece(Point p) {
         if (activePiece.getNotation() == PieceData.KING) {
-           if (p.x == 6 || p.x == 2)
-               moveRookInCastling(p);
-       }
+            if (p.x == 6 || p.x == 2)
+                moveRookInCastling(p);
+        }
         if (activePiece.getNotation() == PieceData.PAWN) {
-           if (p.y == 5 || p.y == 2)
-               removeEnPassantPawn(p);
-       }
-       lastPos = activePiece.getPos();
-       lastPiece = activePiece;
-       activePiece.move(p);
-   }
+            if (p.y == 5 || p.y == 2)
+                removeEnPassantPawn(p);
+        }
+        lastPos = activePiece.getPos();
+        lastPiece = activePiece;
+        activePiece.move(p);
+    }
 
     private void removeEnPassantPawn(Point p) {
         Piece pieceToRemove = getPieceAt(p);
@@ -73,31 +74,31 @@ class Board implements IKingInformation, IPawnInformation {
 
     void setActivePiece(Point p) {
         activePiece = getPieceAt(p);
-   }
+    }
 
     boolean correctColorPiece(Point p, boolean isWhite) {
-       return getPieceAt(p) != null && getPieceAt(p).isWhite() == isWhite;
-   }
+        return getPieceAt(p) != null && getPieceAt(p).isWhite() == isWhite;
+    }
 
     List<PieceObjectData> getAllPiecesData() {
         List<PieceObjectData> returnList = new ArrayList<>();
-        for(Piece p : allAlivePieces){
+        for (Piece p : allAlivePieces) {
             returnList.add(new PieceObjectData(p, p.getPos(), p.isWhite()));
         }
         return returnList;
-   }
+    }
 
     PieceObjectData getActivePieceData() {
-        if(hasActivePiece()){
+        if (hasActivePiece()) {
             return new PieceObjectData(activePiece, activePiece.getPos(), activePiece.isWhite());
         }
         return null;
-   }
+    }
 
     @Nullable
-    private Piece getPieceAt(Point p){
-        for (Piece piece : allAlivePieces){
-            if(piece.getPos().equals(p)){
+    private Piece getPieceAt(Point p) {
+        for (Piece piece : allAlivePieces) {
+            if (piece.getPos().equals(p)) {
                 return piece;
             }
         }
@@ -115,26 +116,25 @@ class Board implements IKingInformation, IPawnInformation {
     boolean canMoveActivePiece(Point p) {
         if (hasActivePiece()) {
             if (activePiece.canMove(p)) {
-                return !isCheck(p);
+                return !isCheck(activePiece, p);
             }
         }
         return false;
     }
 
-    private boolean isCheck(Point p) {
-        Piece tempPiece = getPieceAt(p);
-        Point tempPos = activePiece.getPos();
-        removePieceAt(p);
-        activePiece.move(p);
-        boolean isCheck = findIfPositionHasCheck(activePiece.isWhite());
-        activePiece.move(tempPos);
-        if (tempPiece != null)
-            allAlivePieces.add(tempPiece);
+    private boolean isCheck(Piece pieceToMove, Point p) {
+        Piece pieceToRemove = getPieceAt(p);
+        Point tempPos = pieceToMove.getPos();
+        pieceToMove.move(p);
+        List<Piece> tempList = new ArrayList<>(allAlivePieces);
+        tempList.remove(pieceToRemove);
+        boolean isCheck = findIfPositionHasCheck(tempList, pieceToMove.isWhite());
+        pieceToMove.move(tempPos);
         return isCheck;
     }
 
-    private boolean findIfPositionHasCheck(boolean isWhite) {
-        for (Piece p : allAlivePieces) {
+    private boolean findIfPositionHasCheck(List<Piece> pieceList, boolean isWhite) {
+        for (Piece p : pieceList) {
             if ((p.getNotation() == PieceData.MOVED_KING || p.getNotation() == PieceData.KING) && p.isWhite() == isWhite) {
                 return canMoveTo(p.getPos(), !isWhite);
             }
@@ -152,7 +152,6 @@ class Board implements IKingInformation, IPawnInformation {
         Piece cur = getPieceAt(pos);
         return getPieceAt(pos).isWhite();
     }
-
 
 
     @Override
@@ -193,6 +192,46 @@ class Board implements IKingInformation, IPawnInformation {
                 return lastPos.y == 6 && lastPiece.getPos().y == 4;
             } else if (p.y == 2) {
                 return lastPos.y == 1 && lastPiece.getPos().y == 3;
+            }
+        }
+        return false;
+    }
+
+    GameStatus getStatus() {
+        return status;
+    }
+
+    void checkForEndOfGame(boolean whitesTurn) {
+        //Checking if a piece can move
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                for (Piece p : allAlivePieces) {
+                    if (canMoveTo(p, whitesTurn, x, y)) {
+                        status = GameStatus.RUNNING;
+                        return;
+                    }
+                }
+            }
+        }
+        //Checking if the king is in check, if so it is checkmate
+        Piece king = null;
+        for (Piece p : allAlivePieces) {
+            if ((p.getNotation() == PieceData.KING || p.getNotation() == PieceData.MOVED_KING) && whitesTurn == p.isWhite()) {
+                king = p;
+                break;
+            }
+        }
+        if (canMoveTo(king.getPos(), !whitesTurn)) {
+            status = !whitesTurn ? GameStatus.WHITE_WON : GameStatus.BLACK_WON;
+            return;
+        }
+        status = GameStatus.STALEMATE;
+    }
+
+    private boolean canMoveTo(Piece p, boolean whitesTurn, int x, int y) {
+        if (p.isWhite() == whitesTurn) {
+            if (p.canMove(new Point(x, y))) {
+                return !isCheck(p, new Point(x, y));
             }
         }
         return false;

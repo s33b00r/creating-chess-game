@@ -1,4 +1,4 @@
-package model.chessGame;
+package model.chessgame;
 
 import observerinterfaces.IRedrawable;
 

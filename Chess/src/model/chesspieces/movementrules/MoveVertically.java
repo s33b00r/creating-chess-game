@@ -17,7 +17,7 @@ public class MoveVertically implements MoveInOneLine {
 
     @Override
     public boolean canMove(IPieceAt pieceMap, boolean isWhite, Point currentPos, Point wantedPos) {
-        if (currentPos.x != wantedPos.x)
+        if (currentPos.x != wantedPos.x || currentPos.y == wantedPos.y)
             return false;
         int dy = wantedPos.y - currentPos.y;
         int stepDirY = dy > 0 ? 1 : -1;
@@ -28,6 +28,8 @@ public class MoveVertically implements MoveInOneLine {
             if (pieceMap.pieceAt(new Point(curX, curY)))
                 return false;
             curY += stepDirY;
+            if (Math.abs(curY) > 100)
+                System.out.println("VERTICAL");
         }
 
         return !pieceMap.pieceAt(wantedPos) || pieceMap.isWhiteAt(wantedPos) != isWhite;

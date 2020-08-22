@@ -18,7 +18,7 @@ public class MoveDiagonally implements MoveInOneLine {
     public boolean canMove(IPieceAt pieceMap, boolean isWhite, Point currentPos, Point wantedPos) {
         int dx = wantedPos.x - currentPos.x;
         int dy = wantedPos.y - currentPos.y;
-        if (Math.abs(dx) != Math.abs(dy)) {
+        if (Math.abs(dx) != Math.abs(dy) || dx == 0) {
             return false;
         }
         int stepDirX = dx > 0 ? 1 : -1;
@@ -33,6 +33,8 @@ public class MoveDiagonally implements MoveInOneLine {
             }
             currX += stepDirX;
             currY += stepDirY;
+            if (Math.abs(currX) > 100)
+                System.out.println("DIAGONAL");
         }
 
         return !pieceMap.pieceAt(wantedPos) || pieceMap.isWhiteAt(wantedPos) != isWhite;

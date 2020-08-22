@@ -34,9 +34,11 @@ public class Pawn extends Piece {
                 return pieceMap.isWhiteAt(p) != isWhite;
             else if (((p.y == 5) && isWhite) || ((p.y == 2) && !isWhite))
                 return pieceMap.canEnPassant(p);
-        } else if (Math.abs(dx) > 0) {
-            return false;
         }
+
+        //If not capturing, shouldn't go sideways
+        if (Math.abs(dx) > 0)
+            return false;
 
         //Isn't going on any other piece
         if (pieceMap.pieceAt(new Point(getPos().x, getPos().y + stepDirY)))
