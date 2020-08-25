@@ -21,7 +21,7 @@ public class Pawn extends Piece {
         int stepDirY = dy > 0 ? 1 : -1;
 
         //Move correct amount of steps
-        if (Math.abs(dx) > 1 || Math.abs(dy) > 2)
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 2 || dy == 0)
             return false;
 
         //Move in correct direction

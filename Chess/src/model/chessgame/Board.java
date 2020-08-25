@@ -42,19 +42,20 @@ class Board implements IKingInformation, IPawnInformation {
         }
         if (activePiece.getNotation() == PieceData.PAWN) {
             if (p.y == 5 || p.y == 2)
-                removeEnPassantPawn(p);
+                removeEnPassantPawn(p, activePiece.isWhite());
         }
         lastPos = activePiece.getPos();
         lastPiece = activePiece;
         activePiece.move(p);
     }
 
-    private void removeEnPassantPawn(Point p) {
+    private void removeEnPassantPawn(Point p, boolean isWhite) {
         Piece pieceToRemove = getPieceAt(p);
         if (pieceToRemove == null) {
             int y = p.y == 5 ? 4 : 3;
             pieceToRemove = getPieceAt(new Point(p.x, y));
-            allAlivePieces.remove(pieceToRemove);
+            if(pieceToRemove != null && isWhite != pieceToRemove.isWhite())
+                allAlivePieces.remove(pieceToRemove);
         }
     }
 
@@ -126,17 +127,31 @@ class Board implements IKingInformation, IPawnInformation {
         Piece pieceToRemove = getPieceAt(p);
         Point tempPos = pieceToMove.getPos();
         pieceToMove.move(p);
-        List<Piece> tempList = new ArrayList<>(allAlivePieces);
-        tempList.remove(pieceToRemove);
+        List<Piece> tempList;
+        if(pieceToRemove != null){
+            tempList = new ArrayList<>(allAlivePieces);
+            tempList.remove(pieceToRemove);
+        } else {
+            tempList = allAlivePieces;
+        }
         boolean isCheck = findIfPositionHasCheck(tempList, pieceToMove.isWhite());
         pieceToMove.move(tempPos);
         return isCheck;
     }
 
     private boolean findIfPositionHasCheck(List<Piece> pieceList, boolean isWhite) {
+        Piece king = null;
         for (Piece p : pieceList) {
             if ((p.getNotation() == PieceData.MOVED_KING || p.getNotation() == PieceData.KING) && p.isWhite() == isWhite) {
-                return canMoveTo(p.getPos(), !isWhite);
+                king = p;
+                break;
+            }
+        }
+
+        for(Piece p : pieceList){
+            if(p.isWhite() != isWhite){
+                if(p.canMove(king.getPos()))
+                    return true;
             }
         }
         return false;
