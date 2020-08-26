@@ -1,9 +1,8 @@
-import backgrounds.StandardBackground;
 import controller.ChessMouseController;
 import model.chessgame.ChessGameFactory;
 import model.chessgame.IChessGame;
 import observerinterfaces.IMousePositionListener;
-import view.ChessPieceView;
+import view.GameView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,9 +16,8 @@ public class Application extends JFrame implements IMousePositionListener {
     private static final String NAME = "Chess";
 
     private ChessMouseController mouseController;
-    private ChessPieceView cGUI;
     private IChessGame cGame;
-    private JLayeredPane full = new JLayeredPane();
+    private GameView full;
 
     private static int xBoardOffset = 10;
     private static int yBoardOffset = 10;
@@ -34,26 +32,18 @@ public class Application extends JFrame implements IMousePositionListener {
 
         //Initialization of objects
         app.cGame = ChessGameFactory.createChessGame(app);
+        app.full = new GameView(xBoardOffset, yBoardOffset, WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50,
+                ChessGameFactory.getPathHandler(), ChessGameFactory.getItemHandler(), app);
         app.mouseController = new ChessMouseController(app.cGame, xBoardOffset, yBoardOffset + TOP_BORDER_SIZE,
                 WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50 + TOP_BORDER_SIZE + yBoardOffset);
-        app.cGUI = new ChessPieceView(ChessGameFactory.convertChessGameForView(app.cGame), app,
-                10, 10, WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50);
 
-        app.cGame.addRedrawableObserver(app.cGUI);
+        app.cGame.addRedrawableObserver(app.full);
 
-        JPanel bg = new StandardBackground(xBoardOffset, yBoardOffset,
-                WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50);
 
         //Extra Configuration for application and objects
         app.addMouseListener(app.mouseController);
         app.add(app.full, BorderLayout.CENTER);
         app.full.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        app.cGUI.setOpaque(false);
-        bg.setOpaque(true);
-
-        //Adding all widgets
-        app.full.add(bg, 0, 0);
-        app.full.add(app.cGUI, 1, 0);
 
         //Extra
         app.pack();

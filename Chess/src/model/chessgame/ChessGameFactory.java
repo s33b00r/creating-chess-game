@@ -3,12 +3,21 @@ package model.chessgame;
 import observerinterfaces.IMousePositionListener;
 
 public class ChessGameFactory {
-    public static IChessGame createChessGame(IMousePositionListener mousePositionListener){
-        return new ChessGame(mousePositionListener);
+
+    private static ChessGame chessGame;
+
+    public static IChessGame createChessGame(IMousePositionListener mousePositionListener) {
+        if (chessGame == null)
+            chessGame = new ChessGame(mousePositionListener);
+        return chessGame;
     }
 
-    public static IViewItems convertChessGameForView(IChessGame chessGame){
-        return (IViewItems)chessGame;
+    public static IViewPathHandler getPathHandler() {
+        return chessGame;
+    }
+
+    public static IViewItemHandler getItemHandler() {
+        return chessGame;
     }
 
 }

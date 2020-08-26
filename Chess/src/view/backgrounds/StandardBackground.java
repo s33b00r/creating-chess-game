@@ -1,4 +1,4 @@
-package backgrounds;
+package view.backgrounds;
 
 import javax.swing.*;
 import java.awt.*;

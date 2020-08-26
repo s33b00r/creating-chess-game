@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-class ChessGame implements IChessGame, IViewItems {
+class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
 
     private Board board;
     private List<IRedrawable> redrawableList = new ArrayList<>();
