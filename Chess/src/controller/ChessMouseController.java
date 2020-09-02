@@ -1,36 +1,37 @@
 package controller;
 
 
-import model.chessgame.IChessGame;
+import observerinterfaces.IMouseClickListener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ChessMouseController implements MouseListener {
 
-    private IChessGame chessGame;
+    private List<IMouseClickListener> mouseClickListeners = new ArrayList<>();
 
-    private int squareWidth;
-    private int squareHeight;
-    private int marginLeft;
-    private int marginUp;
+    private int yOffset = 25;
 
+    public ChessMouseController() {
 
-    public ChessMouseController(IChessGame chessGame, int xStart, int yStart, int xEnd, int yEnd){
-        this.chessGame = chessGame;
-        squareWidth = (xEnd - xStart) / 8;
-        squareHeight = (yEnd - yStart) / 8;
-        marginLeft = xStart;
-        marginUp = yStart;
+    }
+
+    public ChessMouseController(int yOffset) {
+        this.yOffset = yOffset;
+    }
+
+    public void addListeners(IMouseClickListener... listeners) {
+        mouseClickListeners.addAll(Arrays.asList(listeners));
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int x = (e.getX() - marginLeft);
-        x /= squareWidth;
-        int y = (e.getY() - marginUp);
-        y /= squareHeight;
-        chessGame.mouseClick(x, y);
+        for (IMouseClickListener listener : mouseClickListeners) {
+            listener.clicked(e.getX(), e.getY() - 25);
+        }
     }
 
     @Override

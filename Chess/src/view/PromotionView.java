@@ -8,11 +8,13 @@ import java.util.List;
 
 public class PromotionView extends JPanel {
 
-    private boolean isVisible = false;
+    private volatile boolean isVisible = false;
     private IImageHandler imageHandler;
+
     private int offsetX = 200;
     private int offsetY = 300;
     private List<Object> piecesToShow;
+    private volatile Object clickedPieceObject;
 
     PromotionView(IImageHandler imageHandler, List<Object> piecesToShow) {
         this.imageHandler = imageHandler;
@@ -45,5 +47,30 @@ public class PromotionView extends JPanel {
     public void repaint(boolean show) {
         this.isVisible = show;
         super.repaint();
+    }
+
+    public void click(int x, int y) {
+        if (!isVisible) {
+            clickedPieceObject = null;
+            return;
+        }
+        int minX = offsetX;
+        int maxX = getWidth() - offsetX;
+        int minY = offsetY;
+        int maxY = getHeight() - offsetY;
+        if (x > minX && x < maxX && y > minY && y < maxY) {
+            x -= minX;
+            int index = x * 3 / (getWidth() - offsetX * 2);
+            clickedPieceObject = piecesToShow.get(index);
+        }
+    }
+
+    public Object getClickedPieceObject() {
+        if (!isVisible || clickedPieceObject == null)
+            return null;
+
+        Object temp = clickedPieceObject;
+        clickedPieceObject = null;
+        return temp;
     }
 }

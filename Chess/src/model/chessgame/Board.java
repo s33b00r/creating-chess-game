@@ -16,6 +16,12 @@ import java.util.Map;
 
 class Board implements IKingInformation, IPawnInformation {
 
+    IPromotionHandler promotionHandler;
+
+    Board(IPromotionHandler promotionHandler) {
+        this.promotionHandler = promotionHandler;
+    }
+
     private List<Piece> allAlivePieces;
 
     private GameStatus status = GameStatus.RUNNING;
@@ -43,10 +49,30 @@ class Board implements IKingInformation, IPawnInformation {
         if (activePiece.getNotation() == PieceData.PAWN) {
             if (p.y == 5 || p.y == 2)
                 removeEnPassantPawn(p, activePiece.isWhite());
+            if (p.y == 7 || p.y == 0) {
+                promotionMove(p);
+            }
         }
         lastPos = activePiece.getPos();
         lastPiece = activePiece;
         activePiece.move(p);
+        activePiece = null;
+    }
+
+    private void promotionMove(Point p) {
+        activePiece.move(p);
+        Piece temp = activePiece;
+        activePiece = null;
+        while (true) {
+            Object pieceToBe = promotionHandler.getPromotionPiece(temp.isWhite());
+            if (pieceToBe != null) {
+                allAlivePieces.remove(temp);
+                Piece promoted = PieceOrganizer.convertToRealPiece(pieceToBe, p, temp.isWhite(), this);
+                allAlivePieces.add(promoted);
+                activePiece = promoted;
+                break;
+            }
+        }
     }
 
     private void removeEnPassantPawn(Point p, boolean isWhite) {
@@ -54,7 +80,7 @@ class Board implements IKingInformation, IPawnInformation {
         if (pieceToRemove == null) {
             int y = p.y == 5 ? 4 : 3;
             pieceToRemove = getPieceAt(new Point(p.x, y));
-            if(pieceToRemove != null && isWhite != pieceToRemove.isWhite())
+            if (pieceToRemove != null && isWhite != pieceToRemove.isWhite())
                 allAlivePieces.remove(pieceToRemove);
         }
     }
@@ -106,9 +132,6 @@ class Board implements IKingInformation, IPawnInformation {
         return null;
     }
 
-    void removeActivePiece() {
-        activePiece = null;
-    }
 
     void removePieceAt(Point p) {
         allAlivePieces.remove(getPieceAt(p));
@@ -250,5 +273,9 @@ class Board implements IKingInformation, IPawnInformation {
             }
         }
         return false;
+    }
+
+    public void clearActivePiece() {
+        activePiece = null;
     }
 }

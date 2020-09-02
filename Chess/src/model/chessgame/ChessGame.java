@@ -3,7 +3,6 @@ package model.chessgame;
 
 import model.invertedboardstate.InvertedBoard;
 import model.invertedboardstate.InvertedBoardState;
-import observerinterfaces.IMousePositionListener;
 import observerinterfaces.IRedrawable;
 import pathhandling.PiecePathsHandler;
 
@@ -12,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
+class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler, IPromotionHandler {
 
     private Board board;
-    private List<IRedrawable> redrawableList = new ArrayList<>();
+    private IRedrawable redrawable;
     private boolean hasCheckForEndOfGame = true;
 
     private boolean whitesTurn = true;
@@ -23,16 +22,26 @@ class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
     private InvertedBoardState state = new InvertedBoard();
     private boolean lastUpdate = false;
 
-    ChessGame(IMousePositionListener mousePositionListener){
-        board = new Board();
+    private int width;
+    private int height;
+    private int xPos;
+    private int yPos;
+
+    ChessGame(int xPos, int yPos, int width, int height) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.width = width;
+        this.height = height;
+
+        board = new Board(this);
         board.setup();
 
         start();
     }
 
     @Override
-    public void addRedrawableObserver(IRedrawable redrawable){
-        redrawableList.add(redrawable);
+    public void addRedrawableObserver(IRedrawable redrawable) {
+        this.redrawable = redrawable;
     }
 
     @Override
@@ -54,16 +63,6 @@ class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
         return board.getActivePieceData();
     }
 
-    @Override
-    public void mouseClick(int xPos, int yPos) {
-
-        Point rightPos = state.getPos(new Point(xPos, yPos));
-
-        Runnable runnable = () -> onMouseClick(rightPos);
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
-
     private void onMouseClick(Point boardPos) {
         if (board.hasActivePiece()) {
             if (board.canMoveActivePiece(boardPos)) {
@@ -71,8 +70,9 @@ class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
                 board.placeActivePiece(boardPos);
                 whitesTurn = !whitesTurn;
                 hasCheckForEndOfGame = false;
+            } else {
+                board.clearActivePiece();
             }
-            board.removeActivePiece();
         } else {
             if (board.correctColorPiece(boardPos, whitesTurn)) {
                 board.setActivePiece(boardPos);
@@ -97,11 +97,13 @@ class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
         thread.start();
     }
 
-    private void update(){
-        if(board.hasActivePiece() || !lastUpdate){
-            for (IRedrawable iRedrawable : redrawableList) {
-                iRedrawable.repaint();
-            }
+    /**
+     * Visual update method that call for update on the visual if there is an active piece
+     * Also checks if game has ended once every move
+     */
+    private void update() {
+        if (/*(board.hasActivePiece() || !lastUpdate) && */ redrawable != null) { //TODO: maybe make so only update when necessary
+            redrawable.repaint();
             lastUpdate = !board.hasActivePiece();
         }
         if (!hasCheckForEndOfGame) {
@@ -119,4 +121,26 @@ class ChessGame implements IChessGame, IViewPathHandler, IViewItemHandler {
     }
 
 
+    @Override
+    public Object getPromotionPiece(boolean isWhite) {
+        redrawable.showPromotionUI(true);
+        Object pieceTest = redrawable.getClickedOnPiece();
+        if (pieceTest != null) {
+            redrawable.showPromotionUI(false);
+        }
+        return pieceTest;
+    }
+
+    @Override
+    public void clicked(int x, int y) {
+
+        x = (x - xPos) * 8 / width;
+        y = (y - yPos) * 8 / height;
+
+        Point rightPos = state.getPos(new Point(x, y));
+
+        Runnable runnable = () -> onMouseClick(rightPos);
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
 }

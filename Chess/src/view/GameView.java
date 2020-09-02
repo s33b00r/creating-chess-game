@@ -6,6 +6,7 @@ import model.chesspieces.actualpieces.Bishop;
 import model.chesspieces.actualpieces.Knight;
 import model.chesspieces.actualpieces.Queen;
 import model.chesspieces.actualpieces.Rook;
+import observerinterfaces.IMouseClickListener;
 import observerinterfaces.IMousePositionListener;
 import observerinterfaces.IRedrawable;
 import view.backgrounds.StandardBackground;
@@ -20,12 +21,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameView extends JLayeredPane implements IRedrawable, IImageHandler {
+public class GameView extends JLayeredPane implements IRedrawable, IImageHandler, IMouseClickListener {
 
     private StandardBackground standardBackground;
     private ChessPieceView chessPieceView;
     private PromotionView promotionView;
-    private boolean showPromotionView = true;
+    private boolean showPromotionView = false;
     private IViewPathHandler pathHandler;
 
     private Map<Boolean, Map<Object, BufferedImage>> imageMap;
@@ -69,6 +70,11 @@ public class GameView extends JLayeredPane implements IRedrawable, IImageHandler
     }
 
     @Override
+    public Object getClickedOnPiece() {
+        return promotionView.getClickedPieceObject();
+    }
+
+    @Override
     public void showPromotionUI(boolean show) {
         showPromotionView = show;
     }
@@ -108,5 +114,10 @@ public class GameView extends JLayeredPane implements IRedrawable, IImageHandler
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    public void clicked(int x, int y) {
+        promotionView.click(x, y);
     }
 }

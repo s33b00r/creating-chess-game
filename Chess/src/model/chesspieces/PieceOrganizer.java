@@ -2,8 +2,10 @@ package model.chesspieces;
 
 import model.chesspieces.actualpieces.*;
 import model.chesspieces.cascades.IPieceAt;
+import org.jetbrains.annotations.Nullable;
 import pathhandling.PiecePathsHandler;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,5 +81,23 @@ public class PieceOrganizer {
         returnMap.put(false, blackPieceMap);
 
         return returnMap;
+    }
+
+    @Nullable
+    public static Piece convertToRealPiece(Object pieceToBe, Point p, boolean white, IPieceAt pieceMap) {
+
+        if (pieceToBe.toString().contains("Queen")) {
+            return new Queen(p.x, p.y, white, pieceMap);
+        }
+        if (pieceToBe.toString().contains("Rook")) {
+            return new Rook(p.x, p.y, white, pieceMap);
+        }
+        if (pieceToBe.toString().contains("Knight")) {
+            return new Knight(p.x, p.y, white, pieceMap);
+        }
+        if (pieceToBe.toString().contains("Bishop")) {
+            return new Bishop(p.x, p.y, white, pieceMap);
+        }
+        return null;
     }
 }

@@ -1,14 +1,12 @@
 package model.chessgame;
 
-import observerinterfaces.IMousePositionListener;
-
 public class ChessGameFactory {
 
     private static ChessGame chessGame;
 
-    public static IChessGame createChessGame(IMousePositionListener mousePositionListener) {
+    public static IChessGame createChessGame(int xPos, int yPos, int width, int height) {
         if (chessGame == null)
-            chessGame = new ChessGame(mousePositionListener);
+            chessGame = new ChessGame(xPos, yPos, width, height);
         return chessGame;
     }
 

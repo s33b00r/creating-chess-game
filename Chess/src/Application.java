@@ -10,6 +10,12 @@ import java.awt.*;
 public class Application extends JFrame implements IMousePositionListener {
     private static int WINDOW_WIDTH = 800;
     private static int WINDOW_HEIGHT = 800;
+
+    private static int BOARD_WIDTH = 700;
+    private static int BOARD_HEIGHT = 700;
+    private static int BOARD_X = (WINDOW_WIDTH - BOARD_WIDTH) / 2;
+    private static int BOARD_Y = (WINDOW_HEIGHT - BOARD_HEIGHT) / 2;
+
     private static final int TOP_BORDER_SIZE = 30;
 
 
@@ -19,8 +25,6 @@ public class Application extends JFrame implements IMousePositionListener {
     private IChessGame cGame;
     private GameView full;
 
-    private static int xBoardOffset = 10;
-    private static int yBoardOffset = 10;
 
     public static void main(String[] args) {
 
@@ -31,11 +35,11 @@ public class Application extends JFrame implements IMousePositionListener {
         app.getContentPane().setBackground(Color.blue);
 
         //Initialization of objects
-        app.cGame = ChessGameFactory.createChessGame(app);
-        app.full = new GameView(xBoardOffset, yBoardOffset, WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50,
+        app.cGame = ChessGameFactory.createChessGame(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT);
+        app.full = new GameView(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT,
                 ChessGameFactory.getPathHandler(), ChessGameFactory.getItemHandler(), app);
-        app.mouseController = new ChessMouseController(app.cGame, xBoardOffset, yBoardOffset + TOP_BORDER_SIZE,
-                WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50 + TOP_BORDER_SIZE + yBoardOffset);
+        app.mouseController = new ChessMouseController();
+        app.mouseController.addListeners(app.cGame, app.full);
 
         app.cGame.addRedrawableObserver(app.full);
 
@@ -53,10 +57,10 @@ public class Application extends JFrame implements IMousePositionListener {
 
     @Override
     public Point getLocalMousePosition() {
-        if(getMousePosition() != null){
+        if(getMousePosition() != null) {
             Point returnPoint = getMousePosition();
-            returnPoint.x -= xBoardOffset;
-            returnPoint.y -= yBoardOffset;
+            returnPoint.x -= BOARD_X;
+            returnPoint.y -= BOARD_Y;
             return returnPoint;
         }
         return null;

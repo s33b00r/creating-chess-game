@@ -1,8 +1,8 @@
 package model.chessgame;
 
+import observerinterfaces.IMouseClickListener;
 import observerinterfaces.IRedrawable;
 
-public interface IChessGame {
-    void mouseClick(int xPos, int yPos);
+public interface IChessGame extends IMouseClickListener {
     void addRedrawableObserver(IRedrawable redrawable);
 }
